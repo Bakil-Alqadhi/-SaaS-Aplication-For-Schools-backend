@@ -27,7 +27,9 @@ use Laravel\Sanctum\Sanctum;
 class AuthController extends Controller
 {
     protected $school_id;
-    protected $guard ;
+
+    protected $authUser ;
+    protected $guard ='web';
 
     protected $token ;
     public  function __construct(Request $request)
@@ -39,6 +41,9 @@ class AuthController extends Controller
             event(new DbSchoolConnected(School::findOrFail($this->school_id)));
             DB::setDefaultConnection('tenant');
         }
+        else {
+            DB::setDefaultConnection('mysql');
+        }
     //    Config::set('database.connections', 'tenant');
         $this->middleware('auth:sanctum')->only('user', 'destroy');
     }
@@ -46,11 +51,19 @@ class AuthController extends Controller
     {
         $user = $request->user();
         $tokens = $user->tokens;
-        $firstTokenName = $tokens->isEmpty() ? null : $tokens->first()->name;
+        if($this->guard == 'director'){
+            $this->authUser = new SchoolsResource(School::where('id', $this->school_id)->first());
+        } else if($this->guard == 'teacher'){
+            $this->authUser = new TeacherResource($user);
+        } else if($this->guard == 'student'){
+            $this->authUser = new StudentResource($user);
+        }
+        //$firstTokenName = $tokens->isEmpty() ? null : $tokens->first()->name;
        return response()->json([
-        'user' => auth($this->guard)->user(),
+        'user' => $this->authUser,
         'school' => $this->school_id,
-        'role' => $firstTokenName
+        'role' => $user->currentAccessToken()->name,
+        'token' => $this->token
        ]);
     }
     public function login(Request $request){
@@ -59,7 +72,7 @@ class AuthController extends Controller
             'password' => ['required', 'string'],
             'userType' => ['required', 'string']
         ]);
-        $credentials = $request->only('email', 'password');
+        // $credentials = $request->only('email', 'password');
        if($this->guard == 'director'){
             //check email
             $user = User::where('email', $request->email)->first();
@@ -76,12 +89,11 @@ class AuthController extends Controller
             $response = [
                 'user' => new SchoolsResource(School::where('id', $user->school_id)->first()),
                 'token' =>$token,
-                'auth' => Auth::guard($this->guard)->user(),
                 'school' => $this->school_id
             ];
             return response($response, 201);
         // }
-        } else if( $request->userType == 'teacher'){
+        } else if( $this->guard == 'teacher'){
                 event(new DbSchoolConnected(School::findOrFail($this->school_id)));
                 // check email
                 $teacher = Teacher::where('email', $request->email)->first();
@@ -91,15 +103,11 @@ class AuthController extends Controller
                         'message' => 'Invalid email or password',
                     ], 401);
                 }
-                // if(Auth::guard('teacher')->attempt($credentials)){
-                //     $teacher = Auth::guard('teacher')->user();
                 $token = $teacher->createToken('teacher')->plainTextToken ;
-
                 $response = [
                     'user' => new TeacherResource($teacher),
                     'token' =>$token,
                     'school' => $this->school_id,
-                    'auth' => Auth::guard($this->guard)->user()
                 ];
                 return response($response, 201);
             // }
@@ -123,7 +131,7 @@ class AuthController extends Controller
                 ];
                 return response($response, 201);
             }
-        return response(['message' => 'Login again']);
+        return response(['message' => 'Login again!']);
     }
     public function register(Request $request)
     {
@@ -196,11 +204,11 @@ class AuthController extends Controller
        // $token = $user->tokens()->findOrFail($token_id)->delete();
 
        //logout from current device
-       $user->currentAccessToken()->delete();
+    //    $user->currentAccessToken()->delete();
 
         //logout from all devices
-      //  $user->tokens()->delete();
+       $user->tokens()->delete();
 
-        return response()->json([ 'message' => 'You logged out!']);
+        return response()->json([ 'message' => 'You logged out from all the devices!']);
     }
 }

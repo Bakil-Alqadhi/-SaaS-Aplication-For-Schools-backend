@@ -28,17 +28,15 @@ use Laravel\Sanctum\PersonalAccessToken;
 
 // });
 
+
 Route::get('/user', [AuthController::class, 'user']);
+
 Route::delete('/user/logout', [AuthController::class, 'destroy']);
 
+    Route::post('/register', [AuthController::class, 'register'])->name('register');
+    Route::post('/login', [AuthController::class, 'login'])->name('login');
+    // Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
-Route::post('/register', [AuthController::class, 'register'])->name('register');
-
-Route::post('/login', [AuthController::class, 'login'])->name('login');
-
-Route::group( ['middleware' => 'auth:sanctum'],function(){
-    Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
-});
 
 Route::middleware('auth:sanctum')->get('/get', function (Request $request) {
     return 'hi bakil';
