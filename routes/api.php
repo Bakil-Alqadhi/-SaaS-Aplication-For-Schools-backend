@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\SchoolController;
+use App\Http\Controllers\StudentController;
+use App\Http\Controllers\TeacherController;
 use Illuminate\Foundation\Auth\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -31,31 +33,30 @@ use Laravel\Sanctum\PersonalAccessToken;
 
 Route::get('/user', [AuthController::class, 'user']);
 
-Route::delete('/user/logout', [AuthController::class, 'destroy']);
-
-    Route::post('/register', [AuthController::class, 'register'])->name('register');
-    Route::post('/login', [AuthController::class, 'login'])->name('login');
-    // Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+Route::post('/logout', [AuthController::class, 'destroy'])->name('logout');
+Route::post('/register', [AuthController::class, 'register'])->name('register');
+Route::post('/login', [AuthController::class, 'login'])->name('login');
+// Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 
 Route::middleware('auth:sanctum')->get('/get', function (Request $request) {
     return 'hi bakil';
 });
-Route::get('/me', function(Request $request){
-//     $user = User::tokens()->
-$token = $request->header('Authorization');
+Route::get('/me', function (Request $request) {
+    //     $user = User::tokens()->
+    $token = $request->header('Authorization');
 
-// The `$token` variable now contains the value of the `Authorization` header
-// You can extract the token value from the header by removing the "Bearer " prefix:
-$tokenValue = str_replace('Bearer ', '', $token);
+    // The `$token` variable now contains the value of the `Authorization` header
+    // You can extract the token value from the header by removing the "Bearer " prefix:
+    $tokenValue = str_replace('Bearer ', '', $token);
 
-// $tokenId = DB::table('personal_access_tokens')
-//             ->where('token',  hash('sha256', $tokenValue))->value('id');
-// $user = User::where($tokenId)->first();
+    // $tokenId = DB::table('personal_access_tokens')
+    //             ->where('token',  hash('sha256', $tokenValue))->value('id');
+    // $user = User::where($tokenId)->first();
 
-$tokenModel = PersonalAccessToken::where('token',$tokenValue)->first();
+    $tokenModel = PersonalAccessToken::where('token', $tokenValue)->first();
 
-return response()->json($tokenModel->name);
+    return response()->json($tokenModel->name);
 });
 
 
@@ -75,25 +76,25 @@ return response()->json($tokenModel->name);
 //     Route::post('/acceptNewMember', [SchoolController::class, 'newMember'])->name('newMember');
 // });
 
-    Route::prefix('/schools')->group(function(){
-        Route::get('', [SchoolController::class, 'index'])->name('schools');
-        Route::prefix("/{school}")->group(function(){
-            Route::get('', [SchoolController::class, 'show'])->name('show');
+Route::prefix('/schools')->group(function () {
+    Route::get('', [SchoolController::class, 'index'])->name('schools');
+    Route::prefix("/{school}")->group(function () {
+        Route::get('', [SchoolController::class, 'show'])->name('show');
 
-            //student routes
-            Route::prefix('/students')->group(function(){
-                //get all students
-                Route::get('/', [StudentController::class, 'index'])->name('students');
-                Route::get('/{student}', [StudentController::class, 'show'])->name('show');
-            });
+        //student routes
+        Route::prefix('/students')->group(function () {
+            //get all students
+            Route::get('/', [StudentController::class, 'index'])->name('students');
+            Route::get('/{student}', [StudentController::class, 'show'])->name('show');
+        });
 
-            //test pagination
-            Route::get('/pagination', [TeacherController::class, 'test'])->name('test');
+        //test pagination
+        Route::get('/pagination', [TeacherController::class, 'test'])->name('test');
 
-            //teachers routes
-            Route::prefix('/teachers')->group(function(){
-                Route::get('', [TeacherController::class, 'index'])->name('teachers');
-                Route::get('/{id}', [TeacherController::class, 'show'])->name('show');
-            });
-});
+        //teachers routes
+        Route::prefix('/teachers')->group(function () {
+            Route::get('', [TeacherController::class, 'index'])->name('teachers');
+            Route::get('/{id}', [TeacherController::class, 'show'])->name('show');
+        });
     });
+});

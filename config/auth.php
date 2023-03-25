@@ -40,10 +40,10 @@ return [
             'driver' => 'session',
             'provider' => 'users',
         ],
-        'director' =>[
-            'driver' => 'sanctum',
-            'provider' => 'users',
-        ],
+        // 'director' => [
+        //     'driver' => 'session',
+        //     'provider' => 'users',
+        // ],
         'student' => [
             'driver' => 'sanctum',
             'provider' => 'students',
