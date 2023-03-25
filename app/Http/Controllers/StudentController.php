@@ -19,9 +19,9 @@ use Laravel\Sanctum\HasApiTokens;
 class StudentController extends Controller
 {
     //get all students
-    public function index(School $school)
+    public function index(Request $request)
     {
-        event(new DbSchoolConnected($school));
+        event(new DbSchoolConnected(School::findOrFail($request->user()->school_id)));
         return response()->json(StudentResource::collection(Student::where('isJoined', true)->latest()->get()));
     }
     public static function register($request)
@@ -81,9 +81,9 @@ class StudentController extends Controller
     }
 
     //show one student
-    public function show(School $school, $id)
+    public function show(Request $request , $id)
     {
-        event(new DbSchoolConnected($school));
+        event(new DbSchoolConnected(School::findOrFail($request->user()->school_id)));
         return response()->json(new StudentResource(Student::findOrFail($id)));
     }
 }

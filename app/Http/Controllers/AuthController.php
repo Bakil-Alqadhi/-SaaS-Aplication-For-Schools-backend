@@ -47,7 +47,6 @@ class AuthController extends Controller
         } else {
             DB::setDefaultConnection('mysql');
         }
-        //    Config::set('database.connections', 'tenant');
         $this->middleware('auth:sanctum')->only('user', 'destroy');
     }
     public function user(Request $request)
@@ -55,7 +54,7 @@ class AuthController extends Controller
         $user = $request->user();
         $tokens = $user->tokens;
         if ($this->guard == 'web') {
-            $this->authUser = new SchoolsResource(School::where('id', $this->school_id)->first());
+            $this->authUser = new SchoolsResource(School::where('id', $user->school_id)->first());
         } else if ($this->guard == 'teacher') {
             $this->authUser = new TeacherResource($user);
         } else if ($this->guard == 'student') {
@@ -74,7 +73,6 @@ class AuthController extends Controller
         $request->validate([
             'email' => ['required', 'string'],
             'password' => ['required', 'string'],
-            // 'userType' => ['required', 'string']
         ]);
         // $credentials = $request->only('email', 'password');
         if ($this->guard == 'web') {
@@ -85,7 +83,7 @@ class AuthController extends Controller
             if (!$user || !Hash::check($request->password, $user->password)) {
                 return response()->json([
                     'message' => 'Invalid email or password',
-                ], 401);
+                ], 422);
             }
             // if(Auth::guard('director')->attempt($credentials)){
             // $user = Auth::guard('director')->user();
@@ -105,7 +103,7 @@ class AuthController extends Controller
             if (!$teacher || !Hash::check($request->password, $teacher->password)) {
                 return response()->json([
                     'message' => 'Invalid email or password',
-                ], 401);
+                ], 422);
             }
             $token = $teacher->createToken('teacher')->plainTextToken;
             $response = [
@@ -116,7 +114,7 @@ class AuthController extends Controller
             return response($response, 201);
             // }
 
-        } else if ($request->userType == 'student') {
+        } else if ($this->guard == 'student') {
             // event(new DbSchoolConnected(School::findOrFail($this->school_id)));
             //check email
             $student = Student::where('email', $request->email)->first();
@@ -125,7 +123,7 @@ class AuthController extends Controller
             if (!$student || !Hash::check($request->password, $student->password)) {
                 return response()->json([
                     'message' => 'Invalid email or password',
-                ], 401);
+                ], 422);
             }
             $token = $student->createToken('student')->plainTextToken;
             $response = [
@@ -137,7 +135,7 @@ class AuthController extends Controller
         }
         return response()->json([
             'message' => 'Invalid email or password',
-        ], 401);
+        ], 422);
     }
     public function register(Request $request)
     {
@@ -203,10 +201,7 @@ class AuthController extends Controller
     //logout method
     public function destroy(Request $request)
     {
-        // if($this->guard == 'director') {
-        //     $this->guard ='web';
-        // }
-        $user = Auth::guard($this->guard)->user();
+        $user = $request->user();
 
         //logout from single device
         // $token = $user->tokens()->findOrFail($token_id)->delete();
@@ -215,7 +210,7 @@ class AuthController extends Controller
         //    $user->currentAccessToken()->delete();
 
         //logout from all devices
-           $user->tokens->delete();
+        $user->tokens()->delete();
 
         return response()->json(['message' => 'You logged out from all the devices!']);
     }

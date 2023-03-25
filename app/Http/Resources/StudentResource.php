@@ -22,7 +22,7 @@ class StudentResource extends JsonResource
             'student_first_name' => $this->first_name,
             'student_middle_name' => $this->middle_name,
             'student_last_name' => $this->last_name,
-            'image' => $this->image,
+            'image' => $this->image_path,
             'sex' => $this->sex,
             'birthday' => $this->birthday,
             'address'=> $this->address,

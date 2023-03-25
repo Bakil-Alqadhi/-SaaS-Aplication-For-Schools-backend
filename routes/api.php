@@ -30,6 +30,9 @@ use Laravel\Sanctum\PersonalAccessToken;
 
 // });
 
+Route::middleware(['IsDirector', 'auth:sanctum'])->get( 'gettt',function(){
+    return 'dddd';
+});
 
 Route::get('/user', [AuthController::class, 'user']);
 
@@ -38,26 +41,26 @@ Route::post('/register', [AuthController::class, 'register'])->name('register');
 Route::post('/login', [AuthController::class, 'login'])->name('login');
 // Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
+//routes for the director requests
+Route::middleware('auth:sanctum')->group(function(){
 
-Route::middleware('auth:sanctum')->get('/get', function (Request $request) {
-    return 'hi bakil';
+    //teachers routes
+    Route::prefix('/teachers')->group(function () {
+        Route::get('', [TeacherController::class, 'index'])->name('teachers');
+        Route::get('/{id}', [TeacherController::class, 'show'])->name('show');
+    });
+
+    //student routes
+    Route::prefix('/students')->group(function () {
+        //get all students
+        Route::get('/', [StudentController::class, 'index'])->name('students');
+        Route::get('/{student}', [StudentController::class, 'show'])->name('show');
+    });
+
+    Route::get('/waiting', [SchoolController::class, 'getWaiting'])->name('wait');
+    Route::post('/acceptNewMember/{id}', [SchoolController::class, 'newMember'])->name('newMember');
 });
-Route::get('/me', function (Request $request) {
-    //     $user = User::tokens()->
-    $token = $request->header('Authorization');
 
-    // The `$token` variable now contains the value of the `Authorization` header
-    // You can extract the token value from the header by removing the "Bearer " prefix:
-    $tokenValue = str_replace('Bearer ', '', $token);
-
-    // $tokenId = DB::table('personal_access_tokens')
-    //             ->where('token',  hash('sha256', $tokenValue))->value('id');
-    // $user = User::where($tokenId)->first();
-
-    $tokenModel = PersonalAccessToken::where('token', $tokenValue)->first();
-
-    return response()->json($tokenModel->name);
-});
 
 
 
@@ -81,20 +84,15 @@ Route::prefix('/schools')->group(function () {
     Route::prefix("/{school}")->group(function () {
         Route::get('', [SchoolController::class, 'show'])->name('show');
 
-        //student routes
-        Route::prefix('/students')->group(function () {
-            //get all students
-            Route::get('/', [StudentController::class, 'index'])->name('students');
-            Route::get('/{student}', [StudentController::class, 'show'])->name('show');
-        });
-
         //test pagination
         Route::get('/pagination', [TeacherController::class, 'test'])->name('test');
 
         //teachers routes
-        Route::prefix('/teachers')->group(function () {
-            Route::get('', [TeacherController::class, 'index'])->name('teachers');
-            Route::get('/{id}', [TeacherController::class, 'show'])->name('show');
-        });
+        // Route::prefix('/teachers')->group(function () {
+        //     Route::get('', [TeacherController::class, 'index'])->name('teachers');
+        //     Route::get('/{id}', [TeacherController::class, 'show'])->name('show');
+        // });
     });
 });
+
+// Route::get('/teachers', [TeacherController::class, 'index'])->middleware(['auth:sanctum'])->name('teachers');

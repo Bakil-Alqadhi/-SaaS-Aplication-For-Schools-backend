@@ -28,7 +28,7 @@ class TeacherController extends Controller
             'image' => ['required', 'string', 'max:255'],
             'about' => ['required', 'string', 'max:255'],
             'phone' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:'.Teacher::class],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:' . Teacher::class],
             'password' => ['required', 'confirmed'],
 
         ]);
@@ -53,15 +53,14 @@ class TeacherController extends Controller
 
             ]);
 
-            $token = $teacher->createToken('teacher')->plainTextToken ;
+            $token = $teacher->createToken('teacher')->plainTextToken;
             $response = [
                 'user' => $teacher,
-                'userType'=> 'teacher',
-                'token' =>$token
+                'userType' => 'teacher',
+                'token' => $token
             ];
             return response($response, 201);
-
-        } catch(Exception $e){
+        } catch (Exception $e) {
             throw $e;
         }
         return response('Bad Request ):');
@@ -69,11 +68,12 @@ class TeacherController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(School $school)
+    public function index(Request $request)
     {
-        event(new DbSchoolConnected($school));
-        // return response()->json(TeacherResource::collection(resource: Teacher::latest()->paginate(5)), status: 200);
-        return response()->json(TeacherResource::collection(resource: Teacher::where('isJoined', true)->latest()->get()));
+        // return $request->user()->school_id;
+        event(new DbSchoolConnected(School::findOrFail($request->user()->school_id)));
+        return response()->json(TeacherResource::collection(resource: Teacher::latest()->paginate(5)), status: 200);
+        // return response()->json(TeacherResource::collection(resource: Teacher::where('isJoined', true)->latest()->get()));
 
         // return Teacher::latest()->paginate(5);
     }
@@ -102,11 +102,12 @@ class TeacherController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(school $school, $id)
+    public function show(Request $request, $id)
     {
-        event(new DbSchoolConnected($school));
+        // return $request->user();
+        event(new DbSchoolConnected(School::findOrFail($request->user()->school_id)));
 
-        return response()->json(new TeacherResource(Teacher::findOrFail($id)), status:200);
+        return response()->json(new TeacherResource(Teacher::findOrFail($id)));
     }
 
     /**
