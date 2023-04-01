@@ -28,6 +28,7 @@ use Laravel\Sanctum\Sanctum;
 class AuthController extends Controller
 {
     protected $school_id;
+    protected $school_name;
 
     protected $authUser;
     protected $guard = 'web';
@@ -38,6 +39,7 @@ class AuthController extends Controller
 
         if ($request->header('X-Sanctum-Guard') != 'director') {
             $this->school_id = $request->header('X-School');
+            $this->school_name = School::where('id', $this->school_id)->first()->school_name;
             $this->guard = $request->header('X-Sanctum-Guard');
         }
         $this->token = $request->bearerToken();
@@ -64,6 +66,7 @@ class AuthController extends Controller
         return response()->json([
             'user' => $this->authUser,
             'school' => $this->school_id,
+            'school_name' => $this->school_name,
             'role' => $user->currentAccessToken()->name,
             'token' => $this->token
         ]);

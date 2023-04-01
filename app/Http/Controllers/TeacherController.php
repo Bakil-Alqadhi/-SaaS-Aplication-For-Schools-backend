@@ -20,7 +20,7 @@ class TeacherController extends Controller
 {
     public static function register(Request $request)
     {
-        event(new DbSchoolConnected(School::findOrFail($request->school_id)));
+        //event(new DbSchoolConnected(School::findOrFail($request->school_id)));
         $request->validate([
             //teacher validation
             'first_name' => ['required', 'string', 'max:255'],
@@ -33,15 +33,6 @@ class TeacherController extends Controller
 
         ]);
         try {
-
-            // $image = null;
-            // if($request->hasFile('school_image') && $request->file('school_image')->isValid()
-            //     && $request->hasFile('director_image') && $request->file('director_image')->isValid()
-            // ){
-            //     $image = $request->file('school_image')->store('schools', 'school_images');
-            //     $director_image = $request->file('director_image')->store('directors', 'school_images');
-            // }
-
             $teacher = Teacher::create([
                 'first_name' =>  $request->first_name,
                 'last_name' => $request->last_name,
@@ -56,7 +47,7 @@ class TeacherController extends Controller
             $token = $teacher->createToken('teacher')->plainTextToken;
             $response = [
                 'user' => $teacher,
-                'userType' => 'teacher',
+                'role' => 'teacher',
                 'token' => $token
             ];
             return response($response, 201);
