@@ -65,6 +65,9 @@ class Kernel extends HttpKernel
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         'connectMainDB' => \App\Http\Middleware\EnsureConnectMainDB::class,
-        'IsDirector' => \App\Http\Middleware\IsDirector::class,
+        'SetConnection' => \App\Http\Middleware\SetConnection::class,
+        'is-director' => \App\Http\Middleware\EnsureGuardDirector::class,
+        'is-teacher' => \App\Http\Middleware\EnsureGuardTeacher::class,
+        'is-student' => \App\Http\Middleware\EnsureGuardStudent::class
     ];
 }

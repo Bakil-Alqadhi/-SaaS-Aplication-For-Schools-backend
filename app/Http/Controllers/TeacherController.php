@@ -63,7 +63,7 @@ class TeacherController extends Controller
     {
         // return $request->user()->school_id;
         event(new DbSchoolConnected(School::findOrFail($request->user()->school_id)));
-        return response()->json(TeacherResource::collection(resource: Teacher::latest()->paginate(5)), status: 200);
+        return response()->json(TeacherResource::collection(resource: Teacher::latest()->get()), status: 200);
         // return response()->json(TeacherResource::collection(resource: Teacher::where('isJoined', true)->latest()->get()));
 
         // return Teacher::latest()->paginate(5);
