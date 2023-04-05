@@ -25,20 +25,25 @@ class SetConnection
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if ($request->header('X-Sanctum-Guard') != 'director') {
-            $this->school_id = $request->header('X-School');
-            $this->school_name = School::where('id', $this->school_id)->first()->school_name;
-            $this->guard = $request->header('X-Sanctum-Guard');
-        }
+        // if ($request->header('X-Sanctum-Guard') != 'director') {
+        //     $this->school_id = $request->header('X-School');
+        //     $this->school_name = School::where('id', $this->school_id)->first()->school_name;
+        //     $this->guard = $request->header('X-Sanctum-Guard');
+        // }
+        // $this->school_name = School::where('id', $this->school_id)->first()->school_name;
+
+        // $this->school_id = $request->header('X-School');
+        $this->guard = $request->header('X-Sanctum-Guard');
+        event(new DbSchoolConnected(School::findOrFail($request->header('X-School'))));
+
         $this->token = $request->bearerToken();
         if ($this->guard == 'teacher' || $this->guard == 'student') {
-            event(new DbSchoolConnected(School::findOrFail($this->school_id)));
             DB::setDefaultConnection('tenant');
         } else {
             DB::setDefaultConnection('mysql');
         }
 
-        
+
         // $this->school_id = $request->header('X-School');
         // event(new DbSchoolConnected(School::findOrFail($this->school_id)));
         //     DB::setDefaultConnection('tenant');

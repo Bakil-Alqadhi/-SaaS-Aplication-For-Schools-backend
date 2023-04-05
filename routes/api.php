@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ClassroomController;
+use App\Http\Controllers\GradeController;
 use App\Http\Controllers\SchoolController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\TeacherController;
@@ -36,14 +38,13 @@ use Laravel\Sanctum\PersonalAccessToken;
 //     return 'dddd';
 // });
 
-Route::get('/', function () {
-    return 'dddd';
-});
+// Route::get('/', function () {
+//     return 'dddd';
+// });
 
 // Route::middleware(['SetConnection', 'auth:sanctum'])->get('/grades', function () {
 //     return StudentResource::collection(Student::all());
 // });
-
 
 
 
@@ -61,13 +62,26 @@ Route::middleware(['SetConnection', 'auth:sanctum'])->group(function () {
     Route::middleware(['is-director'])->group(function () {
         Route::get('/waiting', [SchoolController::class, 'getWaiting'])->name('wait');
         Route::post('/acceptNewMember/{id}', [SchoolController::class, 'newMember'])->name('newMember');
+
+        //Start Grades
+        Route::post('/grades', [GradeController::class, 'store'])->name('storeGrade');
+        Route::get('/grades/index', [GradeController::class, 'index'])->name('getGrades');
+        Route::get('/grades/{id}', [GradeController::class, 'show'])->name('showGrade');
+        Route::put('/grades/{grade}', [GradeController::class, 'update'])->name('updateGrade');
+        Route::delete('/grades/{id}', [GradeController::class, 'destroy'])->name('deleteGrade');
+        //End Grades
+
+        //Start Classroom
+        Route::post('/classrooms', [ClassroomController::class, 'store'])->name('createClassroom');
+        //End Classroom
     });
+
     /////////////////////////////////////////////////////////////
     //teachers routes
     Route::middleware(['is-teacher'])->group(function () {
-        Route::get('/grades', function () {
-            return StudentResource::collection(Student::all());
-        });
+        // Route::get('/grades', function () {
+        //     return StudentResource::collection(Student::all());
+        // });
     });
 
     Route::prefix('/teachers')->group(function () {
@@ -84,7 +98,6 @@ Route::middleware(['SetConnection', 'auth:sanctum'])->group(function () {
         Route::get('/{student}', [StudentController::class, 'show'])->name('show');
     });
 });
-
 
 
 

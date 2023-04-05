@@ -61,10 +61,9 @@ class TeacherController extends Controller
      */
     public function index(Request $request)
     {
-        // return $request->user()->school_id;
-        event(new DbSchoolConnected(School::findOrFail($request->user()->school_id)));
-        return response()->json(TeacherResource::collection(resource: Teacher::latest()->get()), status: 200);
-        // return response()->json(TeacherResource::collection(resource: Teacher::where('isJoined', true)->latest()->get()));
+        // event(new DbSchoolConnected(School::findOrFail($request->header('X-School'))));
+        // // return response()->json(TeacherResource::collection(resource: Teacher::latest()->get()), status: 200);
+        return TeacherResource::collection(resource: Teacher::where('isJoined', true)->latest()->get());
 
         // return Teacher::latest()->paginate(5);
     }
@@ -95,10 +94,9 @@ class TeacherController extends Controller
      */
     public function show(Request $request, $id)
     {
-        // return $request->user();
-        event(new DbSchoolConnected(School::findOrFail($request->user()->school_id)));
+        // event(new DbSchoolConnected(School::findOrFail($request->header('X-School'))));
 
-        return response()->json(new TeacherResource(Teacher::findOrFail($id)));
+        return new TeacherResource(Teacher::findOrFail($id));
     }
 
     /**
