@@ -2,17 +2,18 @@
 
 namespace App\Models;
 
+use App\Models\Grade;
+
 use Illuminate\Database\Eloquent\Model;
 
-class Classroom extends Model 
+class Classroom extends Model
 {
 
-    protected $table = 'classrooms';
-    public $timestamps = true;
+    protected $connection = 'tenant';
 
+    protected $fillable = ['name', 'grade_id'];
     public function grade()
     {
-        return $this->belongsTo('Grade', 'id');
+        return $this->belongsTo(Grade::class);
     }
-
 }

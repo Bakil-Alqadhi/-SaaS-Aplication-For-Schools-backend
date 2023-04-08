@@ -7,6 +7,7 @@ use App\Http\Controllers\SchoolController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\TeacherController;
 use App\Http\Resources\StudentResource;
+use App\Models\Classroom;
 use App\Models\Student;
 use Illuminate\Foundation\Auth\User;
 use Illuminate\Http\Request;
@@ -72,7 +73,12 @@ Route::middleware(['SetConnection', 'auth:sanctum'])->group(function () {
         //End Grades
 
         //Start Classroom
+        Route::get('/classrooms/index', [ClassroomController::class, 'index'])->name('allClassrooms');
+        Route::get('/classrooms/{id}', [ClassroomController::class, 'show'])->name('showClassroom');
+        Route::put('/classrooms/{id}', [ClassroomController::class, 'update'])->name('updateClassroom');
         Route::post('/classrooms', [ClassroomController::class, 'store'])->name('createClassroom');
+        Route::delete('/classrooms/{id}', [ClassroomController::class, 'destroy'])->name('deleteGrade');
+
         //End Classroom
     });
 
@@ -131,5 +137,6 @@ Route::prefix('/schools')->group(function () {
         // });
     });
 });
+
 
 // Route::get('/teachers', [TeacherController::class, 'index'])->middleware(['auth:sanctum'])->name('teachers');
