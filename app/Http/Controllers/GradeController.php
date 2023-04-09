@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\GradeResource;
 use App\Models\Grade;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
@@ -15,6 +16,12 @@ class GradeController extends Controller
     public function index()
     {
         return response()->json(Grade::all());
+    }
+
+    public function gradeData()
+    {
+        // return GradeResource::collection(Grade::latest()->get());
+        return response()->json(GradeResource::collection(Grade::latest()->get()));
     }
 
     public function store(Request $request)

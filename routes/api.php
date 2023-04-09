@@ -4,6 +4,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ClassroomController;
 use App\Http\Controllers\GradeController;
 use App\Http\Controllers\SchoolController;
+use App\Http\Controllers\SectionController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\TeacherController;
 use App\Http\Resources\StudentResource;
@@ -48,6 +49,7 @@ use Laravel\Sanctum\PersonalAccessToken;
 // });
 
 
+Route::get('/grades/data', [GradeController::class, 'gradeData'])->name('gradeData');
 
 Route::get('/user', [AuthController::class, 'user']);
 
@@ -65,6 +67,8 @@ Route::middleware(['SetConnection', 'auth:sanctum'])->group(function () {
         Route::post('/acceptNewMember/{id}', [SchoolController::class, 'newMember'])->name('newMember');
 
         //Start Grades
+        // Route::get('/grades/data', [GradeController::class, 'gradeData'])->name('gradeData');
+
         Route::post('/grades', [GradeController::class, 'store'])->name('storeGrade');
         Route::get('/grades/index', [GradeController::class, 'index'])->name('getGrades');
         Route::get('/grades/{id}', [GradeController::class, 'show'])->name('showGrade');
@@ -78,8 +82,11 @@ Route::middleware(['SetConnection', 'auth:sanctum'])->group(function () {
         Route::put('/classrooms/{id}', [ClassroomController::class, 'update'])->name('updateClassroom');
         Route::post('/classrooms', [ClassroomController::class, 'store'])->name('createClassroom');
         Route::delete('/classrooms/{id}', [ClassroomController::class, 'destroy'])->name('deleteGrade');
-
         //End Classroom
+
+        //Start Sections
+        Route::post('/sections/create', [SectionController::class, 'store'])->name('storeSection');
+        //End Sections
     });
 
     /////////////////////////////////////////////////////////////

@@ -16,4 +16,9 @@ class Classroom extends Model
     {
         return $this->belongsTo(Grade::class);
     }
+
+    public function sections()
+    {
+        return $this->hasMany(Section::class);
+    }
 }

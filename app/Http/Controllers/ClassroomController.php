@@ -8,6 +8,7 @@ use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 
 class ClassroomController extends Controller
 {
@@ -18,6 +19,15 @@ class ClassroomController extends Controller
         foreach ($arrayOfObjects as $index => $object) {
             if (empty($object['name'])) {
                 $this->errors[] = "Classroom " . $index + 1 . ": Name is required.";
+            } else {
+                DB::setDefaultConnection('tenant');
+                $validator = Validator::make($object, [
+                    $object['name'] => [Rule::unique('classrooms', 'name')]
+                ]);
+                if (!$validator) {
+                    $this->errors[] = "Classroom " . $index + 1 . ": This name is taken";
+                }
+                DB::setDefaultConnection('mysql');
             }
             if (empty($object['grade'])) {
                 $this->errors[] = "Classroom " . $index + 1 . ": Grade is required.";
@@ -139,14 +149,6 @@ class ClassroomController extends Controller
         $classroom->save();
 
         return response()->json(['message' => 'The Classroom Updated Successfully'], 201);
-
-        // if ($this->validateArrayOfObjects($request->all())) {
-        //     return response()->json(['message' => 'The Classroom Updated Successfully'], 201);
-        // }
-        // return response()->json([
-        //     'errors' => $validator->errors()
-        // ], 422);
-        // return $request->all();
     }
 
     /**

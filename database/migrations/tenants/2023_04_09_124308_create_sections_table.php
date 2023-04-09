@@ -6,29 +6,15 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-
-    public function up()
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
     {
-        Schema::create('classrooms', function (Blueprint $table) {
+        Schema::create('sections', function (Blueprint $table) {
             $table->id();
-            $table->string('name', 225);
-            $table->bigInteger('grade_id')->unsigned();
-            $table->foreign('grade_id')->references('id')->on('Grades')
-                ->onDelete('cascade')
-                ->onUpdate('cascade');
-            $table->timestamps();
-        });
-    }
-
-    public function down()
-    {
-        Schema::drop('classrooms');
-    }
-};
-/**
-$table->id();
             $table->string('name');
-            $table->string('status');
+            $table->string('status')->default(1);
             $table->bigInteger('grade_id')->unsigned();
             $table->foreign('grade_id')->references('id')->on('grades')
                 ->onDelete('cascade')
@@ -37,4 +23,15 @@ $table->id();
                 ->constrained('classrooms')
                 ->cascadeOnDelete()
                 ->cascadeOnUpdate();
-*/
+            $table->timestamps();
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Schema::dropIfExists('sections');
+    }
+};
