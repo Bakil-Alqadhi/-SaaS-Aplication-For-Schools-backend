@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Classroom;
+use App\Models\Section;
 
 class Grade extends Model
 {
@@ -16,6 +17,6 @@ class Grade extends Model
         return $this->hasMany(Classroom::class);
     }
     public function sections(){
-        return $this->hasMany(Classroom::class);
+        return $this->hasMany(Section::class);
     }
 }

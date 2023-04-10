@@ -111,6 +111,7 @@ Route::middleware(['SetConnection', 'auth:sanctum'])->group(function () {
         Route::get('/{student}', [StudentController::class, 'show'])->name('show');
     });
 });
+Route::get('/sections/index', [SectionController::class, 'index'])->name('allSections');
 
 
 
