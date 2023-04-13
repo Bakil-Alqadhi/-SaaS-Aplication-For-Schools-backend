@@ -58,6 +58,7 @@ Route::post('/register', [AuthController::class, 'register'])->name('register');
 Route::post('/login', [AuthController::class, 'login'])->name('login');
 // Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
+
 //routes for the director requests
 Route::middleware(['SetConnection', 'auth:sanctum'])->group(function () {
     /////////////////////////////////////////////////////
@@ -85,9 +86,14 @@ Route::middleware(['SetConnection', 'auth:sanctum'])->group(function () {
         //End Classroom
 
         //Start Sections
+        Route::get('/sections', [SectionController::class, 'index'])->name('indexSections');
+        Route::get('/sections/{id}', [SectionController::class, 'show'])->name('showSections');
         Route::post('/sections/create', [SectionController::class, 'store'])->name('storeSection');
+        Route::put('/sections/{id}', [SectionController::class, 'update'])->name('updateSection');
+        Route::delete('/sections/{id}', [SectionController::class, 'destroy'])->name('deleteSection');
         //End Sections
     });
+
 
     /////////////////////////////////////////////////////////////
     //teachers routes
@@ -111,7 +117,6 @@ Route::middleware(['SetConnection', 'auth:sanctum'])->group(function () {
         Route::get('/{student}', [StudentController::class, 'show'])->name('show');
     });
 });
-Route::get('/sections/index', [SectionController::class, 'index'])->name('allSections');
 
 
 
