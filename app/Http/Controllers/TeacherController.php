@@ -6,6 +6,7 @@ use App\Events\DbSchoolConnected;
 use App\Http\Resources\TeacherResource;
 use App\Models\School;
 use App\Models\Teacher;
+use App\Interfaces\TeacherRepositoryInterface;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -18,6 +19,11 @@ use Exception;
 
 class TeacherController extends Controller
 {
+    private TeacherRepositoryInterface $teacherRepository;
+    public function __construct(TeacherRepositoryInterface $teacherRepository)
+    {
+        $this->teacherRepository = $teacherRepository;
+    }
     public static function register(Request $request)
     {
         //event(new DbSchoolConnected(School::findOrFail($request->school_id)));
@@ -61,11 +67,12 @@ class TeacherController extends Controller
      */
     public function index(Request $request)
     {
-        // event(new DbSchoolConnected(School::findOrFail($request->header('X-School'))));
-        // // return response()->json(TeacherResource::collection(resource: Teacher::latest()->get()), status: 200);
-        return TeacherResource::collection(resource: Teacher::where('isJoined', true)->latest()->get());
+        // //  response()->json(TeacherResource::collection(resource: Teacher::latest()->get()), status: 200);
+        // return TeacherResource::collection(resource: Teacher::where('isJoined', true)->latest()->get());
 
-        // return Teacher::latest()->paginate(5);
+        return  response()->json([
+            'data' => $this->teacherRepository->getAllTeachers()
+        ]);
     }
 
     public function test(School $school)
