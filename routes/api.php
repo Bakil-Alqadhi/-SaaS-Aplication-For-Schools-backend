@@ -5,6 +5,7 @@ use App\Http\Controllers\ClassroomController;
 use App\Http\Controllers\GradeController;
 use App\Http\Controllers\SchoolController;
 use App\Http\Controllers\SectionController;
+use App\Http\Controllers\SpecializationController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\TeacherController;
 use App\Http\Resources\StudentResource;
@@ -59,6 +60,11 @@ Route::post('/login', [AuthController::class, 'login'])->name('login');
 // Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 
+//Start Specializations
+Route::get('/specializations', [SpecializationController::class, 'index'])->name('getSpecializations');
+//End Specializations
+
+
 //routes for the director requests
 Route::middleware(['SetConnection', 'auth:sanctum'])->group(function () {
     /////////////////////////////////////////////////////
@@ -66,6 +72,7 @@ Route::middleware(['SetConnection', 'auth:sanctum'])->group(function () {
     Route::middleware(['is-director'])->group(function () {
         Route::get('/waiting', [SchoolController::class, 'getWaiting'])->name('wait');
         Route::post('/acceptNewMember/{id}', [SchoolController::class, 'newMember'])->name('newMember');
+
 
         //Start Grades
         // Route::get('/grades/data', [GradeController::class, 'gradeData'])->name('gradeData');
