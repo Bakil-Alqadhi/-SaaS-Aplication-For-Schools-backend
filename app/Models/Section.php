@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Classroom;
 use App\Models\Grade;
+use App\Models\Teacher;
 
 class Section extends Model
 {
@@ -19,5 +20,11 @@ class Section extends Model
     public function classroom()
     {
         return $this->belongsTo(Classroom::class);
+    }
+
+    //relationship between teacher and section (many to many)
+    public function teachers()
+    {
+        return $this->belongsToMany(Teacher::class, 'teacher_section');
     }
 }

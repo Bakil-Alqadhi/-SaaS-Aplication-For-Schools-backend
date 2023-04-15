@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use App\Models\Section;
 
 class Teacher extends Authenticatable
 {
@@ -32,4 +33,10 @@ class Teacher extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    //relationship between teacher and section (many to many)
+    public function sections()
+    {
+        return $this->belongsToMany(Section::class, 'teacher_section');
+    }
 }
