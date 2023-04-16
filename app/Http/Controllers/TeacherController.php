@@ -26,24 +26,24 @@ class TeacherController extends Controller
     }
     public static function register(Request $request)
     {
-        //event(new DbSchoolConnected(School::findOrFail($request->school_id)));
         $request->validate([
             //teacher validation
             'first_name' => ['required', 'string', 'max:255'],
             'last_name' => ['required', 'string', 'max:255'],
             'image' => ['required', 'string', 'max:255'],
             'about' => ['required', 'string', 'max:255'],
+            'specialization' => ['required'],
             'phone' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:' . Teacher::class],
             'password' => ['required', 'confirmed'],
 
         ]);
-        try {
             $teacher = Teacher::create([
                 'first_name' =>  $request->first_name,
                 'last_name' => $request->last_name,
                 'phone' => $request->phone,
                 'about' => $request->about,
+                'specialization_id'=> $request->specialization,
                 'image' => $request->image,
                 'email' => $request->email,
                 'password' => Hash::make($request->password),
@@ -56,12 +56,8 @@ class TeacherController extends Controller
                 'role' => 'teacher',
                 'token' => $token
             ];
-            return response($response, 201);
-        } catch (Exception $e) {
-            throw $e;
+            return response()->json($response, 201);
         }
-        return response('Bad Request ):');
-    }
     /**
      * Display a listing of the resource.
      */
@@ -80,38 +76,15 @@ class TeacherController extends Controller
         event(new DbSchoolConnected($school));
         return Teacher::latest()->paginate(2);
     }
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
 
     /**
      * Display the specified resource.
      */
-    public function show(Request $request, $id)
+    public function show($id)
     {
-        // event(new DbSchoolConnected(School::findOrFail($request->header('X-School'))));
-
-        return new TeacherResource(Teacher::findOrFail($id));
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
+        return  response()->json([
+            'data' => $this->teacherRepository->getTeacherById($id)
+        ]);;
     }
 
     /**
@@ -119,7 +92,7 @@ class TeacherController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        return $this->teacherRepository->updateTeacher($request, $id);
     }
 
     /**

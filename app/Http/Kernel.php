@@ -69,5 +69,6 @@ class Kernel extends HttpKernel
         'is-director' => \App\Http\Middleware\EnsureGuardDirector::class,
         'is-teacher' => \App\Http\Middleware\EnsureGuardTeacher::class,
         'is-student' => \App\Http\Middleware\EnsureGuardStudent::class
+        
     ];
 }

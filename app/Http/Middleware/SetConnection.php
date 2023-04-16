@@ -6,6 +6,7 @@ use App\Events\DbSchoolConnected;
 use App\Models\School;
 use Closure;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -39,6 +40,10 @@ class SetConnection
         $this->token = $request->bearerToken();
         if ($this->guard == 'teacher' || $this->guard == 'student') {
             DB::setDefaultConnection('tenant');
+            Auth::shouldUse($this->guard);
+            // $this->app['config']['auth.defaults.guard'] = $this->guard;
+            config(['auth.defaults.guard' => $this->guard]);
+
         } else {
             DB::setDefaultConnection('mysql');
         }

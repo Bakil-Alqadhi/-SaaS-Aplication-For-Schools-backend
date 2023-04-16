@@ -66,58 +66,68 @@ Route::get('/specializations', [SpecializationController::class, 'index'])->name
 
 
 //routes for the director requests
-Route::middleware(['SetConnection', 'auth:sanctum'])->group(function () {
-    /////////////////////////////////////////////////////
-    //directors routes
-    Route::middleware(['is-director'])->group(function () {
-        Route::get('/waiting', [SchoolController::class, 'getWaiting'])->name('wait');
-        Route::post('/acceptNewMember/{id}', [SchoolController::class, 'newMember'])->name('newMember');
+Route::middleware(['SetConnection'])->group(function () {
+
+    Route::middleware(['auth:sanctum'])->group(function () {
+
+        //Start directors routes
+        Route::middleware(['is-director'])->group(function () {
+            Route::get('/waiting', [SchoolController::class, 'getWaiting'])->name('wait');
+            Route::post('/acceptNewMember/{id}', [SchoolController::class, 'newMember'])->name('newMember');
 
 
-        //Start Grades
-        // Route::get('/grades/data', [GradeController::class, 'gradeData'])->name('gradeData');
+            //Start Grades
+            // Route::get('/grades/data', [GradeController::class, 'gradeData'])->name('gradeData');
 
-        Route::post('/grades', [GradeController::class, 'store'])->name('storeGrade');
-        Route::get('/grades/index', [GradeController::class, 'index'])->name('getGrades');
-        Route::get('/grades/{id}', [GradeController::class, 'show'])->name('showGrade');
-        Route::put('/grades/{grade}', [GradeController::class, 'update'])->name('updateGrade');
-        Route::delete('/grades/{id}', [GradeController::class, 'destroy'])->name('deleteGrade');
-        //End Grades
+            Route::post('/grades', [GradeController::class, 'store'])->name('storeGrade');
+            Route::get('/grades/index', [GradeController::class, 'index'])->name('getGrades');
+            Route::get('/grades/{id}', [GradeController::class, 'show'])->name('showGrade');
+            Route::put('/grades/{grade}', [GradeController::class, 'update'])->name('updateGrade');
+            Route::delete('/grades/{id}', [GradeController::class, 'destroy'])->name('deleteGrade');
+            //End Grades
 
-        //Start Classroom
-        Route::get('/classrooms/index', [ClassroomController::class, 'index'])->name('allClassrooms');
-        Route::get('/classrooms/{id}', [ClassroomController::class, 'show'])->name('showClassroom');
-        Route::put('/classrooms/{id}', [ClassroomController::class, 'update'])->name('updateClassroom');
-        Route::post('/classrooms', [ClassroomController::class, 'store'])->name('createClassroom');
-        Route::delete('/classrooms/{id}', [ClassroomController::class, 'destroy'])->name('deleteGrade');
-        //End Classroom
+            //Start Classroom
+            Route::get('/classrooms/index', [ClassroomController::class, 'index'])->name('allClassrooms');
+            Route::get('/classrooms/{id}', [ClassroomController::class, 'show'])->name('showClassroom');
+            Route::put('/classrooms/{id}', [ClassroomController::class, 'update'])->name('updateClassroom');
+            Route::post('/classrooms', [ClassroomController::class, 'store'])->name('createClassroom');
+            Route::delete('/classrooms/{id}', [ClassroomController::class, 'destroy'])->name('deleteGrade');
+            //End Classroom
 
-        //Start Sections
-        Route::get('/sections', [SectionController::class, 'index'])->name('indexSections');
-        Route::get('/sections/{id}', [SectionController::class, 'show'])->name('showSections');
-        Route::post('/sections/create', [SectionController::class, 'store'])->name('storeSection');
-        Route::put('/sections/{id}', [SectionController::class, 'update'])->name('updateSection');
-        Route::delete('/sections/{id}', [SectionController::class, 'destroy'])->name('deleteSection');
-        //End Sections
+            //Start Sections
+            Route::get('/sections', [SectionController::class, 'index'])->name('indexSections');
+            Route::get('/sections/{id}', [SectionController::class, 'show'])->name('showSections');
+            Route::post('/sections/create', [SectionController::class, 'store'])->name('storeSection');
+            Route::put('/sections/{id}', [SectionController::class, 'update'])->name('updateSection');
+            Route::delete('/sections/{id}', [SectionController::class, 'destroy'])->name('deleteSection');
+            //End Sections
+        });
+
+        //End directors routes
+        /////////////////////////////////////////////////////////////
+        //teachers routes
+        Route::middleware(['is-teacher'])->group(function () {
+            Route::prefix('/teachers')->group(function () {
+                Route::put('/{id}', [TeacherController::class, 'update'])->name('updateTeacher');
+            });
+        });
+
+
+        //End teachers routes
+        /////////////////////////////////////////////////////////////////
+        //Start Student routes
+        Route::middleware(['is-student'])->group(function () {
+        });
+        //End Student routes
+
     });
-
-
-    /////////////////////////////////////////////////////////////
-    //teachers routes
-    Route::middleware(['is-teacher'])->group(function () {
-        // Route::get('/grades', function () {
-        //     return StudentResource::collection(Student::all());
-        // });
-    });
-
     Route::prefix('/teachers')->group(function () {
         Route::get('', [TeacherController::class, 'index'])->name('teachers');
         Route::get('/{id}', [TeacherController::class, 'show'])->name('show');
     });
+    /////////////////////////////////////////////////////
     //////////////////////////////////////////////////////////
     //student routes
-    Route::middleware(['is-student'])->group(function () {
-    });
     Route::prefix('/students')->group(function () {
         //get all students
         Route::get('/', [StudentController::class, 'index'])->name('students');

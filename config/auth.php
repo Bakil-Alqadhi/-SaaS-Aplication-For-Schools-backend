@@ -40,13 +40,23 @@ return [
             'driver' => 'session',
             'provider' => 'users',
         ],
+        // 'student' => [
+        //     'driver' => 'sanctum',
+        //     'provider' => 'students',
+        //     'connection' => 'tenant',
+        // ],
+        // 'teacher' => [
+        //     'driver' => 'sanctum',
+        //     'provider' => 'teachers',
+        //     'connection' => 'tenant',
+        // ],
         'student' => [
-            'driver' => 'sanctum',
+            'driver' => 'session',
             'provider' => 'students',
             'connection' => 'tenant',
         ],
         'teacher' => [
-            'driver' => 'sanctum',
+            'driver' => 'session',
             'provider' => 'teachers',
             'connection' => 'tenant',
         ],

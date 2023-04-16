@@ -19,7 +19,7 @@ class TeacherResource extends JsonResource
             'userType' => 'teacher',
             'first_name' => $this->first_name,
             'last_name' => $this->last_name,
-            'image' => $this->image_path,
+            'image' => $this->image,
             'about' => $this->about,
             'isLeader' => $this->isLeader,
             'isJoined' => $this->isJoined,

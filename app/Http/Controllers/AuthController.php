@@ -40,15 +40,22 @@ class AuthController extends Controller
         if ($request->header('X-Sanctum-Guard') != 'director') {
             $this->school_id = $request->header('X-School');
             $this->school_name = School::where('id', $this->school_id)->first()->school_name;
+            ///
             $this->guard = $request->header('X-Sanctum-Guard');
-        }
-        $this->token = $request->bearerToken();
-        if ($this->guard == 'teacher' || $this->guard == 'student') {
             event(new DbSchoolConnected(School::findOrFail($this->school_id)));
             DB::setDefaultConnection('tenant');
-        } else {
+        }
+        else {
             DB::setDefaultConnection('mysql');
         }
+        ///
+        $this->token = $request->bearerToken();
+        // if ($this->guard == 'teacher' || $this->guard == 'student') {
+        //     event(new DbSchoolConnected(School::findOrFail($this->school_id)));
+        //     DB::setDefaultConnection('tenant');
+        // } else {
+        //     DB::setDefaultConnection('mysql');
+        // }
         $this->middleware('auth:sanctum')->only('user', 'destroy');
     }
     public function user(Request $request)
@@ -191,9 +198,9 @@ class AuthController extends Controller
                 DB::rollBack();
                 throw $e;
             }
-        } else if ($request->userType == 'student') {
+        } else if ($this->guard == 'student') {
             return StudentController::register($request);
-        } else if ($request->userType == 'teacher') {
+        } else if ($this->guard == 'teacher') {
             return TeacherController::register($request);
             //    return $this->testReg();
 
