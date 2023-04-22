@@ -7,6 +7,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use App\Models\Section;
+use App\Models\Specialization;
 
 class Teacher extends Authenticatable
 {
@@ -38,5 +39,11 @@ class Teacher extends Authenticatable
     public function sections()
     {
         return $this->belongsToMany(Section::class, 'teacher_section');
+    }
+
+    //relationship between teacher and section (fmany to many)
+    public function specializations()
+    {
+        return $this->belongsTo(Specialization::class);
     }
 }

@@ -4,9 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Events\DbSchoolConnected;
 use App\Http\Resources\TeacherResource;
+use App\Interfaces\AuthRepositoryInterface;
 use App\Models\School;
 use App\Models\Teacher;
 use App\Interfaces\TeacherRepositoryInterface;
+use App\Repositories\AuthRepository;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -20,9 +22,24 @@ use Exception;
 class TeacherController extends Controller
 {
     private TeacherRepositoryInterface $teacherRepository;
-    public function __construct(TeacherRepositoryInterface $teacherRepository)
+    private AuthRepositoryInterface $authRepository;
+    protected $school_id;
+    protected $school_name;
+
+    protected $authUser;
+    protected $guard = 'web';
+
+    protected $token;
+    public function __construct(Request $request, TeacherRepositoryInterface $teacherRepository, AuthRepositoryInterface $authRepositoryInterface)
     {
         $this->teacherRepository = $teacherRepository;
+        $this->authRepository = $authRepositoryInterface;
+        $this->authRepository->switchingMethod($request);
+        $this->middleware('auth:sanctum')->only( 'who', 'update', 'destroy');
+    }
+    public function who()
+    {
+        return response('this is teacher contrller who method');
     }
     public static function register(Request $request)
     {
@@ -38,26 +55,26 @@ class TeacherController extends Controller
             'password' => ['required', 'confirmed'],
 
         ]);
-            $teacher = Teacher::create([
-                'first_name' =>  $request->first_name,
-                'last_name' => $request->last_name,
-                'phone' => $request->phone,
-                'about' => $request->about,
-                'specialization_id'=> $request->specialization,
-                'image' => $request->image,
-                'email' => $request->email,
-                'password' => Hash::make($request->password),
+        $teacher = Teacher::create([
+            'first_name' =>  $request->first_name,
+            'last_name' => $request->last_name,
+            'phone' => $request->phone,
+            'about' => $request->about,
+            'specialization_id' => $request->specialization,
+            'image' => $request->image,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
 
-            ]);
+        ]);
 
-            $token = $teacher->createToken('teacher')->plainTextToken;
-            $response = [
-                'user' => $teacher,
-                'role' => 'teacher',
-                'token' => $token
-            ];
-            return response()->json($response, 201);
-        }
+        $token = $teacher->createToken('teacher')->plainTextToken;
+        $response = [
+            'user' => $teacher,
+            'role' => 'teacher',
+            'token' => $token
+        ];
+        return response()->json($response, 201);
+    }
     /**
      * Display a listing of the resource.
      */

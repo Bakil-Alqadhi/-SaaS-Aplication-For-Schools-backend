@@ -26,7 +26,7 @@ class GradeController extends Controller
 
     public function gradeData()
     {
-        return $this->gradeRepository->getAllGrades();
+        return $this->gradeRepository->getGradeData();
     }
 
     public function store(Request $request)

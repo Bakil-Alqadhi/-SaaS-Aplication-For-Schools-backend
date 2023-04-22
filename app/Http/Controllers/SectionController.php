@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\GradeResource;
 use App\Http\Resources\SectionResource;
+use App\Interfaces\AuthRepositoryInterface;
 use App\Interfaces\SectionRepositoryInterface;
 use App\Models\Grade;
 use App\Models\Section;
@@ -14,9 +15,12 @@ use Illuminate\Validation\Rule;
 class SectionController extends Controller
 {
     private SectionRepositoryInterface $sectionRepository;
-    public function __construct(SectionRepositoryInterface $sectionRepository)
+    public function __construct(Request $request , SectionRepositoryInterface $sectionRepository, AuthRepositoryInterface $authRepositoryInterface)
     {
         $this->sectionRepository = $sectionRepository;
+
+        $authRepositoryInterface->switchingMethod($request);
+        $this->middleware('auth:sanctum')->only('store', 'show', 'update', 'destroy');
     }
     public function index()
     {
@@ -30,7 +34,7 @@ class SectionController extends Controller
 
     public function show($id)
     {
-        return $this->sectionRepository->showSection($id);
+        return $this->sectionRepository->showSectionById($id);
     }
 
     public function update(Request $request, $id)

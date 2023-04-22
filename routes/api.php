@@ -1,5 +1,6 @@
 <?php
 
+use App\Events\DbSchoolConnected;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ClassroomController;
 use App\Http\Controllers\GradeController;
@@ -10,6 +11,7 @@ use App\Http\Controllers\StudentController;
 use App\Http\Controllers\TeacherController;
 use App\Http\Resources\StudentResource;
 use App\Models\Classroom;
+use App\Models\School;
 use App\Models\Student;
 use Illuminate\Foundation\Auth\User;
 use Illuminate\Http\Request;
@@ -58,6 +60,8 @@ Route::post('/logout', [AuthController::class, 'destroy'])->name('logout');
 Route::post('/register', [AuthController::class, 'register'])->name('register');
 Route::post('/login', [AuthController::class, 'login'])->name('login');
 // Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+// Route::middleware(['SetConnection'])->get('/teachers/who', function (Request $request) {
+Route::get('/teachers/who', [TeacherController::class, 'who']);
 
 
 //Start Specializations
@@ -66,74 +70,86 @@ Route::get('/specializations', [SpecializationController::class, 'index'])->name
 
 
 //routes for the director requests
-Route::middleware(['SetConnection'])->group(function () {
-
-    Route::middleware(['auth:sanctum'])->group(function () {
-
-        //Start directors routes
-        Route::middleware(['is-director'])->group(function () {
-            Route::get('/waiting', [SchoolController::class, 'getWaiting'])->name('wait');
-            Route::post('/acceptNewMember/{id}', [SchoolController::class, 'newMember'])->name('newMember');
+// Route::middleware(['SetConnection'])->group(function () {
 
 
-            //Start Grades
-            // Route::get('/grades/data', [GradeController::class, 'gradeData'])->name('gradeData');
-
-            Route::post('/grades', [GradeController::class, 'store'])->name('storeGrade');
-            Route::get('/grades/index', [GradeController::class, 'index'])->name('getGrades');
-            Route::get('/grades/{id}', [GradeController::class, 'show'])->name('showGrade');
-            Route::put('/grades/{grade}', [GradeController::class, 'update'])->name('updateGrade');
-            Route::delete('/grades/{id}', [GradeController::class, 'destroy'])->name('deleteGrade');
-            //End Grades
-
-            //Start Classroom
-            Route::get('/classrooms/index', [ClassroomController::class, 'index'])->name('allClassrooms');
-            Route::get('/classrooms/{id}', [ClassroomController::class, 'show'])->name('showClassroom');
-            Route::put('/classrooms/{id}', [ClassroomController::class, 'update'])->name('updateClassroom');
-            Route::post('/classrooms', [ClassroomController::class, 'store'])->name('createClassroom');
-            Route::delete('/classrooms/{id}', [ClassroomController::class, 'destroy'])->name('deleteGrade');
-            //End Classroom
-
-            //Start Sections
-            Route::get('/sections', [SectionController::class, 'index'])->name('indexSections');
-            Route::get('/sections/{id}', [SectionController::class, 'show'])->name('showSections');
-            Route::post('/sections/create', [SectionController::class, 'store'])->name('storeSection');
-            Route::put('/sections/{id}', [SectionController::class, 'update'])->name('updateSection');
-            Route::delete('/sections/{id}', [SectionController::class, 'destroy'])->name('deleteSection');
-            //End Sections
-        });
-
-        //End directors routes
-        /////////////////////////////////////////////////////////////
-        //teachers routes
-        Route::middleware(['is-teacher'])->group(function () {
-            Route::prefix('/teachers')->group(function () {
-                Route::put('/{id}', [TeacherController::class, 'update'])->name('updateTeacher');
-            });
-        });
+//Start directors routes
+Route::middleware(['is-director'])->group(function () {
+    Route::get('/waiting', [SchoolController::class, 'getWaiting'])->name('wait');
+    Route::post('/acceptNewMember/{id}', [SchoolController::class, 'newMember'])->name('newMember');
 
 
-        //End teachers routes
-        /////////////////////////////////////////////////////////////////
-        //Start Student routes
-        Route::middleware(['is-student'])->group(function () {
-        });
-        //End Student routes
-
+    //Start Grades
+    Route::prefix('grades')->group(function(){
+        Route::get('/index', [GradeController::class, 'index'])->name('getGrades');
+        Route::get('/data', [GradeController::class, 'gradeData'])->name('gradeData');
+        Route::post('/', [GradeController::class, 'store'])->name('storeGrade');
+        Route::get('/{id}', [GradeController::class, 'show'])->name('showGrade');
+        Route::put('/{grade}', [GradeController::class, 'update'])->name('updateGrade');
+        Route::delete('/{id}', [GradeController::class, 'destroy'])->name('deleteGrade');
     });
-    Route::prefix('/teachers')->group(function () {
-        Route::get('', [TeacherController::class, 'index'])->name('teachers');
-        Route::get('/{id}', [TeacherController::class, 'show'])->name('show');
+    //End Grades
+
+    //Start Classroom
+    Route::prefix('classrooms')->group(function(){
+        Route::post('/', [ClassroomController::class, 'store'])->name('createClassroom');
+        Route::get('/{id}', [ClassroomController::class, 'show'])->name('showClassroom');
+        Route::put('/{id}', [ClassroomController::class, 'update'])->name('updateClassroom');
+        Route::delete('/{id}', [ClassroomController::class, 'destroy'])->name('deleteGrade');
     });
-    /////////////////////////////////////////////////////
-    //////////////////////////////////////////////////////////
-    //student routes
-    Route::prefix('/students')->group(function () {
-        //get all students
-        Route::get('/', [StudentController::class, 'index'])->name('students');
-        Route::get('/{student}', [StudentController::class, 'show'])->name('show');
+    //End Classroom
+
+    //Start Sections
+    Route::prefix('sections')->group(function(){
+        Route::get('/', [SectionController::class, 'index'])->name('indexSections');
+        Route::get('/{id}', [SectionController::class, 'show'])->name('showSections');
+        Route::post('/create', [SectionController::class, 'store'])->name('storeSection');
+        Route::put('/{id}', [SectionController::class, 'update'])->name('updateSection');
+        Route::delete('/{id}', [SectionController::class, 'destroy'])->name('deleteSection');
     });
+    //End Sections
 });
+
+//End directors routes
+/////////////////////////////////////////////////////////////
+//teachers routes
+Route::middleware(['is-teacher'])->group(function () {
+
+    Route::prefix('/teachers')->group(function () {
+        // Route::get('', [TeacherController::class, 'index'])->name('indexTeachers');
+        // Route::get('/{id}', [TeacherController::class, 'show'])->name('showTeacher');
+        Route::put('/{id}', [TeacherController::class, 'update'])->name('updateTeacher');
+    });
+
+    // Route::prefix('/teachers')->group(function () {
+    //     Route::put('/{id}', [TeacherController::class, 'update'])->name('updateTeacher');
+    // });
+    // Route::get('/teachers/who', function (Request $request) {
+    //     return 'this is who method';
+    // });
+});
+
+
+//End teachers routes
+/////////////////////////////////////////////////////////////////
+//Start Student routes
+Route::middleware(['is-student'])->group(function () {
+});
+//End Student routes
+
+Route::prefix('/teachers')->group(function () {
+    Route::get('', [TeacherController::class, 'index'])->name('teachers');
+    Route::get('/{id}', [TeacherController::class, 'show'])->name('show');
+});
+/////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////
+//student routes
+Route::prefix('/students')->group(function () {
+    //get all students
+    Route::get('/', [StudentController::class, 'index'])->name('students');
+    Route::get('/{student}', [StudentController::class, 'show'])->name('show');
+});
+// });
 
 
 

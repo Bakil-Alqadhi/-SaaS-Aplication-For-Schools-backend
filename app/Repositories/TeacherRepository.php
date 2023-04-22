@@ -3,6 +3,7 @@
 namespace App\Repositories;
 use App\Http\Resources\TeacherResource;
 use App\Interfaces\TeacherRepositoryInterface;
+use App\Models\School;
 use App\Models\Teacher;
 use Exception;
 use Illuminate\Support\Facades\DB;
@@ -61,7 +62,7 @@ class TeacherRepository implements TeacherRepositoryInterface
 
     //edit teacher
     public function updateTeacher($request, $id) {
-        DB::setDefaultConnection('tenant');
+        // DB::setDefaultConnection('tenant');
         $request->validate([
             //teacher validation
             'first_name' => ['required', 'string', 'max:255'],
@@ -81,7 +82,7 @@ class TeacherRepository implements TeacherRepositoryInterface
         $teacher->email = $request->email;
         $teacher->save();
 
-        DB::setDefaultConnection('mysql');
+        // DB::setDefaultConnection('mysql');
 
         return response()->json(['message' => 'The Teacher Updated Successfully'], 201);
     }

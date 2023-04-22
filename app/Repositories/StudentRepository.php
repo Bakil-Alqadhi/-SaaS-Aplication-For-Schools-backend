@@ -1,42 +1,27 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Repositories;
 
-use App\Events\DbSchoolConnected;
+use App\Http\Resources\SectionResource;
 use App\Http\Resources\StudentResource;
-use App\Interfaces\AuthRepositoryInterface;
+use App\Http\Resources\TeacherResource;
+use App\Interfaces\SectionRepositoryInterface;
 use App\Interfaces\StudentRepositoryInterface;
+use App\Models\Grade;
 use App\Models\ParentStudent;
-use App\Models\School;
+use App\Models\Section;
 use App\Models\Student;
-use Illuminate\Auth\Events\Registered;
-use Illuminate\Support\Facades\Auth;
+use App\Models\Teacher;
+use Exception;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Validation\Rules;
-use Illuminate\Http\Request;
-use Exception;
-use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Validation\Rule;
 
-class StudentController extends Controller
+class StudentRepository implements StudentRepositoryInterface
 {
-    private StudentRepositoryInterface $studentRepository;
-
-    public function __construct(Request $request, StudentRepositoryInterface $studentRepository, AuthRepositoryInterface $authRepository)
+    // Registration new student
+    public static function registerStudent($request)
     {
-        $authRepository->switchingMethod($request);
-        $this->studentRepository = $studentRepository;
-    }
-    //get all students
-    public function index(Request $request)
-    {
-        event(new DbSchoolConnected(School::findOrFail($request->header('X-School'))));
-        return StudentResource::collection(Student::where('isJoined', true)->latest()->get());
-    }
-
-    public static function register($request)
-    {
-        event(new DbSchoolConnected(School::findOrFail($request->school_id)));
         $request->validate([
             //student validation
             'student_first_name' => ['required', 'string', 'max:255'],
@@ -87,13 +72,7 @@ class StudentController extends Controller
             'user' => new StudentResource($student),
             'token' =>$token
         ];
-        return response($response, 201);
-    }
+        return $response;
 
-    //show one student
-    public function show(Request $request , $id)
-    {
-        event(new DbSchoolConnected(School::findOrFail($request->header('X-School'))));
-        return new StudentResource(Student::findOrFail($id));
     }
 }

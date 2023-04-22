@@ -18,7 +18,7 @@ class GradeRepository implements GradeRepositoryInterface
     public function getAllGrades() {
         return response()->json(Grade::all());
     }
-    public function getGradeDAta() {
+    public function getGradeData() {
         return response()->json(GradeResource::collection(Grade::latest()->get()));
     }
     public function storeGrade($request) {

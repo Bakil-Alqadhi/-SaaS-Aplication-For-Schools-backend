@@ -57,7 +57,7 @@ class SectionRepository implements SectionRepositoryInterface
         return response()->json(['message' => 'New Section Created Successfully'], 201);
     }
 
-    public function showSection($id){
+    public function showSectionById($id){
         $section = Section::where('id', $id)->first();
         // return $section;
         if ($section)
@@ -66,6 +66,7 @@ class SectionRepository implements SectionRepositoryInterface
             return response()->json(['message' => "The Section is't exist"], 402);
     }
 
+    //update section's data
     public function updateSection($request, $id)
     {
         DB::setDefaultConnection('tenant');
@@ -79,6 +80,7 @@ class SectionRepository implements SectionRepositoryInterface
         $section->name = $request->input('name');
         $section->grade_id = $request->input('grade');
         $section->classroom_id = $request->input('classroom');
+        $section->teachers()->sync($request->teachers);
         $section->save();
         DB::setDefaultConnection('mysql');
 

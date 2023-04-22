@@ -53,12 +53,12 @@ return [
         'student' => [
             'driver' => 'session',
             'provider' => 'students',
-            'connection' => 'tenant',
+            // 'connection' => 'tenant',
         ],
         'teacher' => [
             'driver' => 'session',
             'provider' => 'teachers',
-            'connection' => 'tenant',
+            // 'connection' => 'tenant',
         ],
     ],
 

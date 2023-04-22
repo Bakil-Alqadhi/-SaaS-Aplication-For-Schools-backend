@@ -14,6 +14,10 @@ class SectionResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        $teachers = [];
+        foreach($this->teachers as $teacher) {
+            $teachers[] = $teacher->id;
+        }
         return [
             'id' => $this->id,
             'section_name' => $this->name,
@@ -21,6 +25,7 @@ class SectionResource extends JsonResource
             'grade_name' => $this->grade->name,
             'classroom_id' => $this->classroom->id,
             'classroom_name' => $this->classroom->name,
+            'teachers' => $teachers
         ];
     }
 }
