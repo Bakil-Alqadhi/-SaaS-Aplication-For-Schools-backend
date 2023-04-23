@@ -75,4 +75,10 @@ class StudentRepository implements StudentRepositoryInterface
         return $response;
 
     }
+
+    //get all students
+    public function getAllStudent($request) {
+        
+        return StudentResource::collection(Student::where('isJoined', true)->latest()->get());
+    }
 }

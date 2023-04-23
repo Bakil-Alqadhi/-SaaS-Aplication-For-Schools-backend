@@ -4,7 +4,7 @@ namespace App\Interfaces;
 
 interface StudentRepositoryInterface
 {
-    //Registration new student
-    public static function registerStudent($request);
+    //Get all students
+    public function getAllStudent($request);
 
 }

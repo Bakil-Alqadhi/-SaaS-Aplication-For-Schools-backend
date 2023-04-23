@@ -29,7 +29,10 @@ class AuthRepository implements AuthRepositoryInterface
     protected $token;
     public function switchingMethod($request)
     {
-        if ($request->header('X-Sanctum-Guard') != 'director') {
+        if ($request->header('X-School')) {
+            event(new DbSchoolConnected(School::findOrFail($request->header('X-School'))));
+        }
+        if ($request->header('X-Sanctum-Guard') == 'student' || $request->header('X-Sanctum-Guard')=='teacher') {
             $this->school_id = $request->header('X-School');
             $this->school_name = School::where('id', $this->school_id)->first()->school_name;
             $this->guard = $request->header('X-Sanctum-Guard');
@@ -42,7 +45,8 @@ class AuthRepository implements AuthRepositoryInterface
         $this->token = $request->bearerToken();
     }
     //registration method
-    public function register($request){
+    public function register($request)
+    {
         if ($request->userType == 'director') {
 
             $this->directorRegistration($request);
@@ -53,7 +57,8 @@ class AuthRepository implements AuthRepositoryInterface
         }
     }
     //Director Registration method
-    public function directorRegistration($request){
+    public function directorRegistration($request)
+    {
         $request->validate([
             'userType' => ['required', 'string', 'max:255'],
             'name' => ['required', 'string', 'max:255'],
@@ -103,7 +108,8 @@ class AuthRepository implements AuthRepositoryInterface
     }
 
     //Student registration method
-    public function studentRegistration($request){
+    public function studentRegistration($request)
+    {
         $request->validate([
             //student validation
             'student_first_name' => ['required', 'string', 'max:255'],
@@ -114,13 +120,13 @@ class AuthRepository implements AuthRepositoryInterface
             'student_address' => ['required', 'string', 'max:255'],
             'birthday' => ['required', 'date', 'before:today', 'after:' . date('Y-m-d', strtotime('-100 years'))],
             'student_phone' => ['required', 'string', 'max:255'],
-            'student_email' => ['required', 'string', 'email', 'max:255', 'unique:'.Student::class],
+            'student_email' => ['required', 'string', 'email', 'max:255', 'unique:' . Student::class],
             'password' => ['required', 'confirmed'],
             //parent  validation
             'parent_first_name' =>  ['required', 'string', 'max:255'],
             'parent_last_name' => ['required', 'string', 'max:255'],
             'parent_phone' => ['required', 'string', 'max:255'],
-            'parent_email' => ['required', 'string', 'email', 'max:255', 'unique:'.ParentStudent::class],
+            'parent_email' => ['required', 'string', 'email', 'max:255', 'unique:' . ParentStudent::class],
         ]);
         DB::beginTransaction();
         try {
@@ -131,11 +137,11 @@ class AuthRepository implements AuthRepositoryInterface
                 'email' => $request->parent_email,
             ]);
             $student = Student::create([
-                'parent_id'=> $parent->id,
+                'parent_id' => $parent->id,
                 'first_name' => $request->student_first_name,
                 'middle_name' => $request->student_middle_name,
                 'last_name' => $request->student_last_name,
-                'image' =>$request->image,
+                'image' => $request->image,
                 'sex'    => $request->sex,
                 'address' => $request->student_address,
                 'birthday' => $request->birthday,
@@ -146,18 +152,19 @@ class AuthRepository implements AuthRepositoryInterface
 
             $token = $student->createToken('student')->PlainTextToken;
             DB::commit();
-        } catch(Exception $e){
+        } catch (Exception $e) {
             DB::rollBack();
             throw $e;
         }
         $response = [
             'user' => new StudentResource($student),
-            'token' =>$token
+            'token' => $token
         ];
         return $response;
     }
     //Teacher Registration method
-    public function teacherRegistration($request){
+    public function teacherRegistration($request)
+    {
         $request->validate([
             //teacher validation
             'first_name' => ['required', 'string', 'max:255'],

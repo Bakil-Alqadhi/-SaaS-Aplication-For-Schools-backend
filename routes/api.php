@@ -31,26 +31,6 @@ use Laravel\Sanctum\PersonalAccessToken;
 |
 */
 
-// Route::middleware('auth:sanctum, teacher')->get('/user', function (Request $request) {
-//     //$guard = $request->header('guard', 'web');
-//     // return Auth::guard($guard)->user();
-//     return Auth::user();
-//     // return ;
-
-// });
-
-// Route::middleware(['IsDirector', 'auth:sanctum'])->get( 'gettt',function(){
-//     return 'dddd';
-// });
-
-// Route::get('/', function () {
-//     return 'dddd';
-// });
-
-// Route::middleware(['SetConnection', 'auth:sanctum'])->get('/grades', function () {
-//     return StudentResource::collection(Student::all());
-// });
-
 
 Route::get('/grades/data', [GradeController::class, 'gradeData'])->name('gradeData');
 
@@ -63,6 +43,9 @@ Route::post('/login', [AuthController::class, 'login'])->name('login');
 // Route::middleware(['SetConnection'])->get('/teachers/who', function (Request $request) {
 Route::get('/teachers/who', [TeacherController::class, 'who']);
 
+//needed it in frontend reg. form and in the dashboard
+Route::get('/grades/index', [GradeController::class, 'index'])->name('indexGrades');
+
 
 //Start Specializations
 Route::get('/specializations', [SpecializationController::class, 'index'])->name('getSpecializations');
@@ -72,7 +55,6 @@ Route::get('/specializations', [SpecializationController::class, 'index'])->name
 //routes for the director requests
 // Route::middleware(['SetConnection'])->group(function () {
 
-
 //Start directors routes
 Route::middleware(['is-director'])->group(function () {
     Route::get('/waiting', [SchoolController::class, 'getWaiting'])->name('wait');
@@ -81,7 +63,7 @@ Route::middleware(['is-director'])->group(function () {
 
     //Start Grades
     Route::prefix('grades')->group(function(){
-        Route::get('/index', [GradeController::class, 'index'])->name('getGrades');
+        // Route::get('/index', [GradeController::class, 'index'])->name('getGrades');
         Route::get('/data', [GradeController::class, 'gradeData'])->name('gradeData');
         Route::post('/', [GradeController::class, 'store'])->name('storeGrade');
         Route::get('/{id}', [GradeController::class, 'show'])->name('showGrade');

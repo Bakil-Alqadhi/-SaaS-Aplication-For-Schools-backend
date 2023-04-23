@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\GradeResource;
+use App\Interfaces\AuthRepositoryInterface;
 use App\Interfaces\GradeRepositoryInterface;
 use App\Models\Grade;
 use Illuminate\Database\Eloquent\Collection;
@@ -15,9 +16,11 @@ use function PHPSTORM_META\type;
 class GradeController extends Controller
 {
     private GradeRepositoryInterface $gradeRepository;
-    public function __construct(GradeRepositoryInterface $gradeRepository)
+    public function __construct(Request $request, GradeRepositoryInterface $gradeRepository, AuthRepositoryInterface $authRepositoryInterface)
     {
         $this->gradeRepository = $gradeRepository;
+        $authRepositoryInterface->switchingMethod($request);
+
     }
     public function index()
     {

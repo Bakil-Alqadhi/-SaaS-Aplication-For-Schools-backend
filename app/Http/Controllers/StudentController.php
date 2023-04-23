@@ -30,8 +30,9 @@ class StudentController extends Controller
     //get all students
     public function index(Request $request)
     {
-        event(new DbSchoolConnected(School::findOrFail($request->header('X-School'))));
-        return StudentResource::collection(Student::where('isJoined', true)->latest()->get());
+        return response()->json([
+            'data' => $this->studentRepository->getAllStudent($request)
+        ], 200);
     }
 
     public static function register($request)
@@ -47,13 +48,13 @@ class StudentController extends Controller
             'student_address' => ['required', 'string', 'max:255'],
             'birthday' => ['required', 'date', 'before:today', 'after:' . date('Y-m-d', strtotime('-100 years'))],
             'student_phone' => ['required', 'string', 'max:255'],
-            'student_email' => ['required', 'string', 'email', 'max:255', 'unique:'.Student::class],
+            'student_email' => ['required', 'string', 'email', 'max:255', 'unique:' . Student::class],
             'password' => ['required', 'confirmed'],
             //parent  validation
             'parent_first_name' =>  ['required', 'string', 'max:255'],
             'parent_last_name' => ['required', 'string', 'max:255'],
             'parent_phone' => ['required', 'string', 'max:255'],
-            'parent_email' => ['required', 'string', 'email', 'max:255', 'unique:'.ParentStudent::class],
+            'parent_email' => ['required', 'string', 'email', 'max:255', 'unique:' . ParentStudent::class],
         ]);
         DB::beginTransaction();
         try {
@@ -64,11 +65,11 @@ class StudentController extends Controller
                 'email' => $request->parent_email,
             ]);
             $student = Student::create([
-                'parent_id'=> $parent->id,
+                'parent_id' => $parent->id,
                 'first_name' => $request->student_first_name,
                 'middle_name' => $request->student_middle_name,
                 'last_name' => $request->student_last_name,
-                'image' =>$request->image,
+                'image' => $request->image,
                 'sex'    => $request->sex,
                 'address' => $request->student_address,
                 'birthday' => $request->birthday,
@@ -79,19 +80,19 @@ class StudentController extends Controller
 
             $token = $student->createToken('student')->PlainTextToken;
             DB::commit();
-        } catch(Exception $e){
+        } catch (Exception $e) {
             DB::rollBack();
             throw $e;
         }
         $response = [
             'user' => new StudentResource($student),
-            'token' =>$token
+            'token' => $token
         ];
         return response($response, 201);
     }
 
     //show one student
-    public function show(Request $request , $id)
+    public function show(Request $request, $id)
     {
         event(new DbSchoolConnected(School::findOrFail($request->header('X-School'))));
         return new StudentResource(Student::findOrFail($id));
