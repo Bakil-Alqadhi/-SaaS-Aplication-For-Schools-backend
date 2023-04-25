@@ -4,17 +4,23 @@ namespace App\Http\Controllers;
 
 use App\Events\DbSchoolConnected;
 use App\Http\Resources\SchoolsResource;
-use App\Http\Resources\StudentResource;
 use App\Http\Resources\TeacherResource;
+use App\Interfaces\AuthRepositoryInterface;
+use App\Interfaces\SchoolRepositoryInterface;
 use App\Models\School;
 use App\Models\Student;
 use App\Models\Teacher;
-
 use Illuminate\Http\Request;
 
 
 class SchoolController extends Controller
 {
+    private SchoolRepositoryInterface $schoolRepository;
+    public function __construct(Request $request, SchoolRepositoryInterface $schoolRepository, AuthRepositoryInterface $authRepository)
+    {
+        $authRepository->switchingMethod($request);
+        $this->schoolRepository = $schoolRepository;
+    }
     public function index()
     {
         // $schools = SchoolsResource::collection(School::all());
@@ -33,41 +39,24 @@ class SchoolController extends Controller
     }
 
     //getting all the waiting requests
-    public function getWaiting(Request $request)
+    public function getWaiting()
     {
-        event(new DbSchoolConnected(School::findOrFail($request->user()->school_id)));
-        $teachers = Teacher::where('isJoined', false)->latest()->get();
-        $students = Student::where('isJoined', false)->latest()->get();
-        $response = array_merge(['students' => StudentResource::collection($students)], ['teachers' => TeacherResource::collection($teachers)]);
-        return response()->json($response);
+        // event(new DbSchoolConnected(School::findOrFail($request->user()->school_id)));
+        return response()->json([
+            'data' => $this->schoolRepository->getWaiting()
+        ],200);
         // return auth()->user();
         // return $teachers;
     }
     //accept new member
     public function newMember(Request $request, $id)
     {
-        $request->validate([
-            'userType' => ['required', 'string', 'max:255']
+        // $request->validate([
+        //     'userType' => ['required', 'string', 'max:255']
+        // ]);
+        // event(new DbSchoolConnected(School::findOrFail($request->user()->school_id)));
+        return response()->json([
+            'message' => $this->schoolRepository->newMember($request, $id)
         ]);
-        event(new DbSchoolConnected(School::findOrFail($request->user()->school_id)));
-        if ($request->userType == 'student') {
-            $student = Student::findOrFail($id);
-            if ($student) {
-                $student->isJoined = true;
-                $student->save();
-                return response('The new student has been added to the member of your create school!');
-            } else {
-                return response('Some with went wrong with adding new student');
-            }
-        } else if ($request->userType == 'teacher') {
-            $teacher = Teacher::findOrFail($id);
-            if ($teacher) {
-                $teacher->isJoined = true;
-                $teacher->save();
-                return response()->json(['message' => 'The new teacher has been added to the member of your create school!']);
-            } else {
-                return response()->json(['message' => 'Some thing went wrong with adding new teacher']);
-            }
-        }
     }
 }

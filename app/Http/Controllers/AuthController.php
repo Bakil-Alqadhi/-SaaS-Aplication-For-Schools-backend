@@ -120,7 +120,9 @@ class AuthController extends Controller
         // }
 
 
-        return response()->json($this->register($request), 201);
+        return response()->json([
+            'data'=> $this->authRepository->register($request)
+        ], 201);
 
     }
 

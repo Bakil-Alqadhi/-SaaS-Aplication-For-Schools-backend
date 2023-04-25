@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
@@ -12,13 +13,13 @@ class Student extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
 
-      /**
+    /**
      * The attributes that are mass assignable.
      *
      * @var array<int, string>
      */
     protected $connection = 'tenant';
-    protected $fillable= ['first_name', 'middle_name', 'last_name', 'sex', 'birthday', 'image', 'isJoined', 'address', 'phone', 'email','parent_id'];
+    protected $fillable = ['first_name', 'middle_name', 'last_name', 'sex', 'birthday', 'image', 'isJoined', 'address', 'phone', 'email', 'academic_year', 'parent_id', 'grade_id', 'password'];
 
     public function parent()
     {

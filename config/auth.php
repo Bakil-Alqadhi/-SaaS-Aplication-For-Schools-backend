@@ -40,26 +40,26 @@ return [
             'driver' => 'session',
             'provider' => 'users',
         ],
-        // 'student' => [
-        //     'driver' => 'sanctum',
-        //     'provider' => 'students',
-        //     'connection' => 'tenant',
-        // ],
-        // 'teacher' => [
-        //     'driver' => 'sanctum',
-        //     'provider' => 'teachers',
-        //     'connection' => 'tenant',
-        // ],
         'student' => [
-            'driver' => 'session',
+            'driver' => 'sanctum',
             'provider' => 'students',
-            // 'connection' => 'tenant',
+            'connection' => 'tenant',
         ],
         'teacher' => [
-            'driver' => 'session',
+            'driver' => 'sanctum',
             'provider' => 'teachers',
-            // 'connection' => 'tenant',
+            'connection' => 'tenant',
         ],
+        // 'student' => [
+        //     'driver' => 'session',
+        //     'provider' => 'students',
+        //     // 'connection' => 'tenant',
+        // ],
+        // 'teacher' => [
+        //     'driver' => 'session',
+        //     'provider' => 'teachers',
+        //     // 'connection' => 'tenant',
+        // ],
     ],
 
     /*

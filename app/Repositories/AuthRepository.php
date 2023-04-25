@@ -4,6 +4,7 @@ namespace App\Repositories;
 
 use App\Events\DbSchoolConnected;
 use App\Events\SchoolCreated;
+use App\Http\Requests\StudentRequest;
 use App\Http\Resources\SchoolsResource;
 use App\Http\Resources\StudentResource;
 use App\Http\Resources\TeacherResource;
@@ -13,10 +14,15 @@ use App\Models\School;
 use App\Models\Student;
 use App\Models\Teacher;
 use App\Models\User;
+use Carbon\Carbon;
 use Exception;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Validator;
+use Laravel\Sanctum\HasApiTokens;
+
 
 class AuthRepository implements AuthRepositoryInterface
 {
@@ -32,7 +38,7 @@ class AuthRepository implements AuthRepositoryInterface
         if ($request->header('X-School')) {
             event(new DbSchoolConnected(School::findOrFail($request->header('X-School'))));
         }
-        if ($request->header('X-Sanctum-Guard') == 'student' || $request->header('X-Sanctum-Guard')=='teacher') {
+        if ($request->header('X-Sanctum-Guard') == 'student' || $request->header('X-Sanctum-Guard') == 'teacher') {
             $this->school_id = $request->header('X-School');
             $this->school_name = School::where('id', $this->school_id)->first()->school_name;
             $this->guard = $request->header('X-Sanctum-Guard');
@@ -48,12 +54,11 @@ class AuthRepository implements AuthRepositoryInterface
     public function register($request)
     {
         if ($request->userType == 'director') {
-
-            $this->directorRegistration($request);
+            return $this->directorRegistration($request);
         } else if ($this->guard == 'student') {
-            $this->studentRegistration($request);
+            return $this->studentRegistration($request);
         } else if ($this->guard == 'teacher') {
-            $this->teacherRegistration($request);
+            return $this->teacherRegistration($request);
         }
     }
     //Director Registration method
@@ -108,15 +113,36 @@ class AuthRepository implements AuthRepositoryInterface
     }
 
     //Student registration method
-    public function studentRegistration($request)
+    public function studentRegistration(Request $request)
     {
-        $request->validate([
+        // $request->validate([
+        //     //student validation
+        //     'student_first_name' => ['required', 'string', 'max:255'],
+        //     'student_middle_name' => ['required', 'string', 'max:255'],
+        //     'student_last_name' => ['required', 'string', 'max:255'],
+        //     'image' => ['required'],
+        //     'sex'    => ['require', 'string', 'max:6'],
+        //     'grade'    => ['require'],
+        //     'student_address' => ['required', 'string', 'max:255'],
+        //     'birthday' => ['required', 'date', 'before:today', 'after:' . date('Y-m-d', strtotime('-100 years'))],
+        //     'student_phone' => ['required', 'string', 'max:255'],
+        //     'student_email' => ['required', 'string', 'email', 'max:255', 'unique:' . Student::class],
+        //     'password' => ['required', 'confirmed'],
+        //     //parent  validation
+        //     'parent_first_name' =>  ['required', 'string', 'max:255'],
+        //     'parent_last_name' => ['required', 'string', 'max:255'],
+        //     'parent_phone' => ['required', 'string', 'max:255'],
+        //     'parent_email' => ['required', 'string', 'email', 'max:255', 'unique:' . ParentStudent::class],
+        // ]);
+        //////////////////////////////
+        $validator = Validator::make($request->all(), [
             //student validation
             'student_first_name' => ['required', 'string', 'max:255'],
             'student_middle_name' => ['required', 'string', 'max:255'],
             'student_last_name' => ['required', 'string', 'max:255'],
             'image' => ['required'],
             'sex'    => ['require', 'string', 'max:6'],
+            'grade'    => ['require'],
             'student_address' => ['required', 'string', 'max:255'],
             'birthday' => ['required', 'date', 'before:today', 'after:' . date('Y-m-d', strtotime('-100 years'))],
             'student_phone' => ['required', 'string', 'max:255'],
@@ -128,6 +154,11 @@ class AuthRepository implements AuthRepositoryInterface
             'parent_phone' => ['required', 'string', 'max:255'],
             'parent_email' => ['required', 'string', 'email', 'max:255', 'unique:' . ParentStudent::class],
         ]);
+        // if ($validator->fails()) {
+        //     return [
+        //         'errors' => 'errors'
+        //     ];
+        // }
         DB::beginTransaction();
         try {
             $parent = ParentStudent::create([
@@ -143,14 +174,16 @@ class AuthRepository implements AuthRepositoryInterface
                 'last_name' => $request->student_last_name,
                 'image' => $request->image,
                 'sex'    => $request->sex,
+                'grade_id'    => $request->grade,
                 'address' => $request->student_address,
                 'birthday' => $request->birthday,
                 'phone' => $request->student_phone,
                 'email' => $request->student_email,
+                'academic_year' => $request->academic_year ? $request->academic_year : Carbon::now()->format('Y'),
                 'password' => Hash::make($request->password),
             ]);
 
-            $token = $student->createToken('student')->PlainTextToken;
+            $token = $student->createToken('student')->plainTextToken;
             DB::commit();
         } catch (Exception $e) {
             DB::rollBack();

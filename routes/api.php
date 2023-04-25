@@ -57,7 +57,8 @@ Route::get('/specializations', [SpecializationController::class, 'index'])->name
 
 //Start directors routes
 Route::middleware(['is-director'])->group(function () {
-    Route::get('/waiting', [SchoolController::class, 'getWaiting'])->name('wait');
+
+    Route::get('/waiting', [SchoolController::class, 'getWaiting'])->name('getWaiting');
     Route::post('/acceptNewMember/{id}', [SchoolController::class, 'newMember'])->name('newMember');
 
 
