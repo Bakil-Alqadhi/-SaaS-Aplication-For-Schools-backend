@@ -62,8 +62,9 @@ Route::middleware(['is-director'])->group(function () {
     Route::post('/acceptNewMember/{id}', [SchoolController::class, 'newMember'])->name('newMember');
 
 
+
     //Start Grades
-    Route::prefix('grades')->group(function(){
+    Route::prefix('grades')->group(function () {
         // Route::get('/index', [GradeController::class, 'index'])->name('getGrades');
         Route::get('/data', [GradeController::class, 'gradeData'])->name('gradeData');
         Route::post('/', [GradeController::class, 'store'])->name('storeGrade');
@@ -74,7 +75,7 @@ Route::middleware(['is-director'])->group(function () {
     //End Grades
 
     //Start Classroom
-    Route::prefix('classrooms')->group(function(){
+    Route::prefix('classrooms')->group(function () {
         Route::post('/', [ClassroomController::class, 'store'])->name('createClassroom');
         Route::get('/{id}', [ClassroomController::class, 'show'])->name('showClassroom');
         Route::put('/{id}', [ClassroomController::class, 'update'])->name('updateClassroom');
@@ -83,7 +84,7 @@ Route::middleware(['is-director'])->group(function () {
     //End Classroom
 
     //Start Sections
-    Route::prefix('sections')->group(function(){
+    Route::prefix('sections')->group(function () {
         Route::get('/', [SectionController::class, 'index'])->name('indexSections');
         Route::get('/{id}', [SectionController::class, 'show'])->name('showSections');
         Route::post('/create', [SectionController::class, 'store'])->name('storeSection');
@@ -117,6 +118,10 @@ Route::middleware(['is-teacher'])->group(function () {
 /////////////////////////////////////////////////////////////////
 //Start Student routes
 Route::middleware(['is-student'])->group(function () {
+    Route::prefix('/students')->group(function () {
+        Route::delete('/{id}', [StudentController::class, 'destroy'])->name('destroyStudent');
+        Route::put('/{id}', [StudentController::class, 'update'])->name('updateStudent');
+    });
 });
 //End Student routes
 

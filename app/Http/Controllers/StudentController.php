@@ -26,6 +26,8 @@ class StudentController extends Controller
     {
         $authRepository->switchingMethod($request);
         $this->studentRepository = $studentRepository;
+        // $authRepository->switchingMethod($request);
+        $this->middleware('auth:sanctum')->only('destroy');
     }
     //get all students
     public function index(Request $request)
@@ -94,7 +96,12 @@ class StudentController extends Controller
     //show one student
     public function show(Request $request, $id)
     {
-        event(new DbSchoolConnected(School::findOrFail($request->header('X-School'))));
-        return new StudentResource(Student::findOrFail($id));
+        return response()->json([
+            'data' => $this->studentRepository->getStudentById($id)
+        ], 200);
+    }
+    public function destroy(Request $request, $id)
+    {
+        return $this->studentRepository->destroyStudentAccount($request, $id);
     }
 }
