@@ -16,65 +16,94 @@ use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 
 class StudentRepository implements StudentRepositoryInterface
 {
-    // Registration new student
-    public static function registerStudent($request)
+    protected $errors = array();
+    //Validation student store and update
+    public function validation($request)
     {
-        $request->validate([
+        $validator = Validator::make($request->all(), [
             //student validation
             'student_first_name' => ['required', 'string', 'max:255'],
             'student_middle_name' => ['required', 'string', 'max:255'],
             'student_last_name' => ['required', 'string', 'max:255'],
             'image' => ['required'],
-            'sex'    => ['require', 'string', 'max:6'],
-            'student_address' => ['required', 'string', 'max:255'],
+            'sex'    => ['required', 'string', 'max:6'],
+            // 'grade'    => ['required'],
+            'address' => ['required', 'string', 'max:255'],
             'birthday' => ['required', 'date', 'before:today', 'after:' . date('Y-m-d', strtotime('-100 years'))],
             'student_phone' => ['required', 'string', 'max:255'],
-            'student_email' => ['required', 'string', 'email', 'max:255', 'unique:' . Student::class],
-            'password' => ['required', 'confirmed'],
+            'student_email' => ['required', 'string', 'email', 'max:255', Rule::unique('students', 'email')->ignore($request->user()->id)],
             //parent  validation
             'parent_first_name' =>  ['required', 'string', 'max:255'],
             'parent_last_name' => ['required', 'string', 'max:255'],
             'parent_phone' => ['required', 'string', 'max:255'],
-            'parent_email' => ['required', 'string', 'email', 'max:255', 'unique:' . ParentStudent::class],
+            'parent_email' => ['required', 'string', 'email', 'max:255', Rule::unique('parent_students', 'email')->ignore($request->user()->parent_id)],
         ]);
-        DB::beginTransaction();
-        try {
-            $parent = ParentStudent::create([
-                'first_name' =>  $request->parent_first_name,
-                'last_name' => $request->parent_last_name,
-                'phone' => $request->parent_phone,
-                'email' => $request->parent_email,
-            ]);
-            $student = Student::create([
-                'parent_id' => $parent->id,
-                'first_name' => $request->student_first_name,
-                'middle_name' => $request->student_middle_name,
-                'last_name' => $request->student_last_name,
-                'image' => $request->image,
-                'sex'    => $request->sex,
-                'address' => $request->student_address,
-                'birthday' => $request->birthday,
-                'phone' => $request->student_phone,
-                'email' => $request->student_email,
-                'password' => Hash::make($request->password),
-            ]);
-
-            $token = $student->createToken('student')->PlainTextToken;
-            DB::commit();
-        } catch (Exception $e) {
-            DB::rollBack();
-            throw $e;
+        if ($validator->fails()) {
+            $this->errors = $validator->errors()->all();
+            return false;
         }
-        $response = [
-            'user' => new StudentResource($student),
-            'token' => $token
-        ];
-        return $response;
+        return true;
     }
+    // Registration new student
+    // public function registerStudent($request)
+    // {
+    //     $request->validate([
+    //         //student validation
+    //         'student_first_name' => ['required', 'string', 'max:255'],
+    //         'student_middle_name' => ['required', 'string', 'max:255'],
+    //         'student_last_name' => ['required', 'string', 'max:255'],
+    //         'image' => ['required'],
+    //         'sex'    => ['require', 'string', 'max:6'],
+    //         'student_address' => ['required', 'string', 'max:255'],
+    //         'birthday' => ['required', 'date', 'before:today', 'after:' . date('Y-m-d', strtotime('-100 years'))],
+    //         'student_phone' => ['required', 'string', 'max:255'],
+    //         'student_email' => ['required', 'string', 'email', 'max:255', 'unique:' . Student::class],
+    //         'password' => ['required', 'confirmed'],
+    //         //parent  validation
+    //         'parent_first_name' =>  ['required', 'string', 'max:255'],
+    //         'parent_last_name' => ['required', 'string', 'max:255'],
+    //         'parent_phone' => ['required', 'string', 'max:255'],
+    //         'parent_email' => ['required', 'string', 'email', 'max:255', 'unique:' . ParentStudent::class],
+    //     ]);
+    //     DB::beginTransaction();
+    //     try {
+    //         $parent = ParentStudent::create([
+    //             'first_name' =>  $request->parent_first_name,
+    //             'last_name' => $request->parent_last_name,
+    //             'phone' => $request->parent_phone,
+    //             'email' => $request->parent_email,
+    //         ]);
+    //         $student = Student::create([
+    //             'parent_id' => $parent->id,
+    //             'first_name' => $request->student_first_name,
+    //             'middle_name' => $request->student_middle_name,
+    //             'last_name' => $request->student_last_name,
+    //             'image' => $request->image,
+    //             'sex'    => $request->sex,
+    //             'address' => $request->student_address,
+    //             'birthday' => $request->birthday,
+    //             'phone' => $request->student_phone,
+    //             'email' => $request->student_email,
+    //             'password' => Hash::make($request->password),
+    //         ]);
+
+    //         $token = $student->createToken('student')->PlainTextToken;
+    //         DB::commit();
+    //     } catch (Exception $e) {
+    //         DB::rollBack();
+    //         throw $e;
+    //     }
+    //     $response = [
+    //         'user' => new StudentResource($student),
+    //         'token' => $token
+    //     ];
+    //     return $response;
+    // }
 
     //get all students
     public function getAllStudent($request)
@@ -90,7 +119,41 @@ class StudentRepository implements StudentRepositoryInterface
 
     //delete student's account
     public function updateStudent($request, $id){
+        if(!$this->validation($request)) {
+            return response()->json( [
+                'errors' => $this->errors
+            ], 422);
+        } else {
+            $student = Student::findOrFail($id);
+            $student->update($request->all());
 
+
+            DB::beginTransaction();
+            $parent = ParentStudent::findOrFail($student->parent_id);
+            $parent->update([
+                'first_name' =>  $request->parent_first_name,
+                'last_name' => $request->parent_last_name,
+                'phone' => $request->parent_phone,
+                'email' => $request->parent_email,
+            ]);
+            $student->update([
+                'first_name' => $request->student_first_name,
+                'middle_name' => $request->student_middle_name,
+                'last_name' => $request->student_last_name,
+                'image' => $request->image,
+                'sex'    => $request->sex,
+                'address' => $request->address,
+                'birthday' => $request->birthday,
+                'phone' => $request->student_phone,
+                'email' => $request->student_email,
+            ]);
+            $parent->save();
+            $student->save();
+            DB::commit();
+            return response()->json([
+                'message' => 'Student updated successfully'
+                ], 201);
+        }
     }
 
     //delete student's account

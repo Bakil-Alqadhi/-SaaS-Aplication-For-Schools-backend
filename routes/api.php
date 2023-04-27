@@ -32,7 +32,7 @@ use Laravel\Sanctum\PersonalAccessToken;
 */
 
 
-Route::get('/grades/data', [GradeController::class, 'gradeData'])->name('gradeData');
+// Route::get('/grades/data', [GradeController::class, 'gradeData'])->name('gradeData');
 
 Route::get('/user', [AuthController::class, 'user']);
 
@@ -45,6 +45,8 @@ Route::get('/teachers/who', [TeacherController::class, 'who']);
 
 //needed it in frontend reg. form and in the dashboard
 Route::get('/grades/index', [GradeController::class, 'index'])->name('indexGrades');
+//needed for sections and reg. student
+Route::get('grades/data', [GradeController::class, 'gradeData'])->name('gradeData');
 
 
 //Start Specializations
@@ -66,7 +68,6 @@ Route::middleware(['is-director'])->group(function () {
     //Start Grades
     Route::prefix('grades')->group(function () {
         // Route::get('/index', [GradeController::class, 'index'])->name('getGrades');
-        Route::get('/data', [GradeController::class, 'gradeData'])->name('gradeData');
         Route::post('/', [GradeController::class, 'store'])->name('storeGrade');
         Route::get('/{id}', [GradeController::class, 'show'])->name('showGrade');
         Route::put('/{grade}', [GradeController::class, 'update'])->name('updateGrade');
@@ -76,6 +77,7 @@ Route::middleware(['is-director'])->group(function () {
 
     //Start Classroom
     Route::prefix('classrooms')->group(function () {
+        Route::get('/', [ClassroomController::class, 'index'])->name('indexClassrooms');
         Route::post('/', [ClassroomController::class, 'store'])->name('createClassroom');
         Route::get('/{id}', [ClassroomController::class, 'show'])->name('showClassroom');
         Route::put('/{id}', [ClassroomController::class, 'update'])->name('updateClassroom');

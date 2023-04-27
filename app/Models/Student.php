@@ -20,11 +20,6 @@ class Student extends Authenticatable
      */
     protected $connection = 'tenant';
     protected $fillable = ['first_name', 'middle_name', 'last_name', 'sex', 'birthday', 'image', 'isJoined', 'address', 'phone', 'email', 'academic_year', 'parent_id', 'grade_id', 'password'];
-
-    public function parent()
-    {
-        return $this->belongsTo(ParentStudent::class);
-    }
     /**
      * The attributes that should be hidden for serialization.
      *
@@ -43,4 +38,29 @@ class Student extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    //student and parent
+    public function parent()
+    {
+        return $this->belongsTo(ParentStudent::class);
+    }
+
+    //student and grade
+    public function grade()
+    {
+        return $this->belongsTo(Grade::class);
+    }
+
+    //student and classroom
+    public function classroom()
+    {
+        return $this->belongsTo(Classroom::class);
+    }
+
+    //student and section
+    public function section()
+    {
+        return $this->belongsTo(Section::class);
+    }
+
 }
