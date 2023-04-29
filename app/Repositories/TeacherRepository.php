@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Repositories;
+
 use App\Http\Resources\TeacherResource;
 use App\Interfaces\TeacherRepositoryInterface;
 use App\Models\School;
@@ -13,7 +14,8 @@ use Illuminate\Validation\Rule;
 class TeacherRepository implements TeacherRepositoryInterface
 {
     //register new teacher
-    public function registerTeacher($request) {
+    public function registerTeacher($request)
+    {
         $request->validate([
             //teacher validation
             'first_name' => ['required', 'string', 'max:255'],
@@ -32,7 +34,7 @@ class TeacherRepository implements TeacherRepositoryInterface
                 'last_name' => $request->last_name,
                 'phone' => $request->phone,
                 'about' => $request->about,
-                'specialization'=> $request->specialization,
+                'specialization' => $request->specialization,
                 'image' => $request->image,
                 'email' => $request->email,
                 'password' => Hash::make($request->password),
@@ -51,17 +53,20 @@ class TeacherRepository implements TeacherRepositoryInterface
         }
     }
     //get all teachers
-    public function getAllTeachers(){
-        return TeacherResource::collection(resource: Teacher::where('isJoined', true)->latest()->get());
+    public function getAllTeachers()
+    {
+        return TeacherResource::collection(resource: Teacher::where('isJoined', true)->latest()->paginate(5));
     }
 
     //show teacher
-    public function getTeacherById($id){
+    public function getTeacherById($id)
+    {
         return new TeacherResource(Teacher::findOrFail($id));
     }
 
     //edit teacher
-    public function updateTeacher($request, $id) {
+    public function updateTeacher($request, $id)
+    {
         // DB::setDefaultConnection('tenant');
         $request->validate([
             //teacher validation
@@ -86,5 +91,4 @@ class TeacherRepository implements TeacherRepositoryInterface
 
         return response()->json(['message' => 'The Teacher Updated Successfully'], 201);
     }
-
 }

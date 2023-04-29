@@ -26,7 +26,9 @@ class StudentResource extends JsonResource
             'sex' => $this->sex,
             'birthday' => $this->birthday,
             'address'=> $this->address,
+            'grad_name' => $this->grade->name,
             'grade_id' => $this->grade_id,
+            'classroom_name' => $this->classroom->name,
             'classroom_id' => $this->classroom_id,
             'section_id' => $this->section_id,
             'academic_year' => $this->academic_year,
@@ -37,6 +39,7 @@ class StudentResource extends JsonResource
             'parent_last_name' => $parent->last_name,
             'parent_email' => $parent->email,
             'parent_phone' => $parent->phone
+
         ];
     }
 }

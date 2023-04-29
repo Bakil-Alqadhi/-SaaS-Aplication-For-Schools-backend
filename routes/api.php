@@ -4,6 +4,7 @@ use App\Events\DbSchoolConnected;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ClassroomController;
 use App\Http\Controllers\GradeController;
+use App\Http\Controllers\PromotionController;
 use App\Http\Controllers\SchoolController;
 use App\Http\Controllers\SectionController;
 use App\Http\Controllers\SpecializationController;
@@ -63,6 +64,8 @@ Route::middleware(['is-director'])->group(function () {
     Route::get('/waiting', [SchoolController::class, 'getWaiting'])->name('getWaiting');
     Route::post('/acceptNewMember/{id}', [SchoolController::class, 'newMember'])->name('newMember');
 
+    //promotions
+    Route::post('promotions', [PromotionController::class, 'store']);
 
 
     //Start Grades
@@ -82,6 +85,9 @@ Route::middleware(['is-director'])->group(function () {
         Route::get('/{id}', [ClassroomController::class, 'show'])->name('showClassroom');
         Route::put('/{id}', [ClassroomController::class, 'update'])->name('updateClassroom');
         Route::delete('/{id}', [ClassroomController::class, 'destroy'])->name('deleteGrade');
+
+        //getting only students of a specific classroom
+        Route::get('/{id}/students', [ClassroomController::class, 'studentsClassroom']);
     });
     //End Classroom
 
@@ -92,6 +98,9 @@ Route::middleware(['is-director'])->group(function () {
         Route::post('/create', [SectionController::class, 'store'])->name('storeSection');
         Route::put('/{id}', [SectionController::class, 'update'])->name('updateSection');
         Route::delete('/{id}', [SectionController::class, 'destroy'])->name('deleteSection');
+
+        //adding students to the section
+        Route::post('add/students/to/{id}', [SectionController::class, 'addStudents']);
     });
     //End Sections
 });

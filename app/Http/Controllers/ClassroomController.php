@@ -69,6 +69,11 @@ class ClassroomController extends Controller
         return $this->classroomRepository->updateClassroom($request, $id);
     }
 
+    public function studentsClassroom($id)
+    {
+        return $this->classroomRepository->getStudentsByClassroomId($id);
+    }
+
     /**
      * Remove the specified resource from storage.
      *

@@ -1,9 +1,12 @@
 <?php
 
 namespace App\Repositories;
+
 use App\Http\Resources\ClassroomResource;
+use App\Http\Resources\StudentResource;
 use App\Interfaces\ClassroomRepositoryInterface;
 use App\Models\Classroom;
+use App\Models\Section;
 use Exception;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
@@ -13,7 +16,8 @@ class ClassroomRepository implements ClassroomRepositoryInterface
 {
 
     protected $errors = [];
-    public function getAllClassrooms(){
+    public function getAllClassrooms()
+    {
         return response()->json([
             'data' => ClassroomResource::collection(Classroom::all())
         ], 200);
@@ -50,7 +54,8 @@ class ClassroomRepository implements ClassroomRepositoryInterface
         }
         return true;
     }
-    public function storeClassroom($request){
+    public function storeClassroom($request)
+    {
         $data = json_decode($request->getContent(), true);
         if ($this->validateArrayOfObjects($data)) {
             DB::beginTransaction();
@@ -81,14 +86,15 @@ class ClassroomRepository implements ClassroomRepositoryInterface
             ], 422);
         }
     }
-    public function getClassroomById($id){
+    public function getClassroomById($id)
+    {
         // return response()->json(new ClassroomResource(Classroom::findOrFail($id)), 200);
         return response()->json([
             'data' => new ClassroomResource(Classroom::findOrFail($id))
         ], 200);
-
     }
-    public function updateClassroom($request, $id){
+    public function updateClassroom($request, $id)
+    {
         DB::setDefaultConnection('tenant');
         $request->validate([
             'name' => ['required', 'string'],
@@ -103,7 +109,18 @@ class ClassroomRepository implements ClassroomRepositoryInterface
 
         return response()->json(['message' => 'The Classroom Updated Successfully'], 201);
     }
-    public function destroyClassroom($id){
+    public function getStudentsByClassroomId($id)
+    {
+        $section = Section::findOrFail($id);
+        if ($section) {
+            return response()->json([
+                'data' =>  StudentResource::collection($section->classroom->students->where('section_id', null))
+            ], 200);
+        } else
+            return response()->json(['message' => "The Section is't exist"], 402);
+    }
+    public function destroyClassroom($id)
+    {
         $classroom = Classroom::findOrFail($id);
         $classroom->delete();
         return response()->json(['message' => 'The Classroom Deleted Successfully'], 200);

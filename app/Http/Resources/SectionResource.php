@@ -25,7 +25,8 @@ class SectionResource extends JsonResource
             'grade_name' => $this->grade->name,
             'classroom_id' => $this->classroom->id,
             'classroom_name' => $this->classroom->name,
-            'teachers' => $teachers
+            'teachers' => $teachers,
+            'students' => $this->students
         ];
     }
 }

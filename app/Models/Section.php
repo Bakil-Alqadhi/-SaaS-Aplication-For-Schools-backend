@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use App\Models\Classroom;
 use App\Models\Grade;
 use App\Models\Teacher;
+use App\Models\Student;
 
 class Section extends Model
 {
@@ -26,5 +27,9 @@ class Section extends Model
     public function teachers()
     {
         return $this->belongsToMany(Teacher::class, 'teacher_section');
+    }
+
+    public function students(){
+        return $this->hasMany(Student::class);
     }
 }

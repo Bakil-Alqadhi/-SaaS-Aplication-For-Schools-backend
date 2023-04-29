@@ -7,6 +7,7 @@ use App\Http\Resources\TeacherResource;
 use App\Interfaces\SectionRepositoryInterface;
 use App\Models\Grade;
 use App\Models\Section;
+use App\Models\Student;
 use App\Models\Teacher;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
@@ -87,6 +88,26 @@ class SectionRepository implements SectionRepositoryInterface
 
         return response()->json(['message' => 'The Section Updated Successfully'], 201);
     }
+
+    public function addStudentsBySectionId($request, $id){
+        $data = $request->json()->all();
+        $section = Section::findOrFail($id);
+        $selectedStudent = json_decode($data['students'], true);
+        $students = Student::where('classroom_id', $section->classroom->id)
+                ->whereNull('section_id')
+                ->get();
+
+        foreach($students as $student){
+            if(in_array($student->id, $selectedStudent)){
+                $student->section_id = $section->id;
+                $student->save();
+            }
+        }
+        return response()->json([
+            'message' => "Students added to section successfully"
+        ], 200);
+    }
+
     public function destroySection($id)
     {
         $section = Section::findOrFail($id);

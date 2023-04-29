@@ -19,7 +19,9 @@ class ClassroomResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'grade' => $this->grade->name,
-            'grade_id' => $this->grade->id
+            'grade_id' => $this->grade->id,
+            'sections' => $this->sections,
+            'students' => $this->students
             //or
             //'grade' => $this->Grade::findOrFail($this->grade_id)->name
         ];

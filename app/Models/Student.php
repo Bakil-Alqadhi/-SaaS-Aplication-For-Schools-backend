@@ -8,6 +8,9 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use App\Models\ParentStudent;
+use App\Models\Grade;
+use App\Models\Section;
+use App\Models\Classroom;
 
 class Student extends Authenticatable
 {
