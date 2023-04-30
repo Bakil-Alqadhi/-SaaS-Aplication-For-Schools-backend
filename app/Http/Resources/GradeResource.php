@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Models\Classroom;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -19,6 +20,7 @@ class GradeResource extends JsonResource
             'name' => $this->name,
             'number' => $this->number,
             'classrooms' => $this->classrooms,
+            'sectionsClassroom' => ClassroomResource::collection($this->classrooms),
             'sections' => $this->sections
         ];
     }

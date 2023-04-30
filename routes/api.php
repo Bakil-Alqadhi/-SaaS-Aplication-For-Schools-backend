@@ -65,7 +65,7 @@ Route::middleware(['is-director'])->group(function () {
     Route::post('/acceptNewMember/{id}', [SchoolController::class, 'newMember'])->name('newMember');
 
     //promotions
-    Route::post('promotions', [PromotionController::class, 'store']);
+    Route::post('/promotions', [PromotionController::class, 'store']);
 
 
     //Start Grades

@@ -10,5 +10,5 @@ class Promotion extends Model
     use HasFactory;
     protected $connection = 'tenant';
 
-    protected $guard=[];
+    protected $fillable = ['student_id', 'from_grade', 'from_classroom', 'from_section', 'to_grade', 'to_classroom', 'to_section'];
 }

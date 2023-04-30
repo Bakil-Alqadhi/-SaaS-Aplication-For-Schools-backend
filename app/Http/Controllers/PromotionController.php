@@ -8,13 +8,12 @@ use Illuminate\Http\Request;
 
 class PromotionController extends Controller
 {
-    private $promotionRepository;
+    private StudentPromotionRepositoryInterface $promotionRepository;
 
     public function __construct(Request $request, StudentPromotionRepositoryInterface $promotionRepository, AuthRepositoryInterface $authRepository)
     {
         $authRepository->switchingMethod($request);
         $this->promotionRepository = $promotionRepository;
-        // $authRepository->switchingMethod($request);
         $this->middleware('auth:sanctum')->only('store');
     }
 

@@ -55,6 +55,11 @@ class GradeRepository implements GradeRepositoryInterface
     }
     public function destroyGrade($id) {
         $grade = Grade::findOrFail($id);
+        $students = $grade->students;
+        foreach($students as $student){
+            $student->grade_id = null;
+            $student->save();
+        }
         $grade->delete();
         return response()->json(['message' => 'Grade Deleted Successfully'], 200);
 

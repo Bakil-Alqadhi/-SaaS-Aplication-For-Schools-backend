@@ -122,6 +122,11 @@ class ClassroomRepository implements ClassroomRepositoryInterface
     public function destroyClassroom($id)
     {
         $classroom = Classroom::findOrFail($id);
+        $students = $classroom->students;
+        foreach($students as $student){
+            $student->classroom_id = null;
+            $student->save();
+        }
         $classroom->delete();
         return response()->json(['message' => 'The Classroom Deleted Successfully'], 200);
     }

@@ -111,6 +111,11 @@ class SectionRepository implements SectionRepositoryInterface
     public function destroySection($id)
     {
         $section = Section::findOrFail($id);
+        $students = $section->students;
+        foreach($students as $student){
+            $student->section_id = null;
+            $student->save();
+        }
         $section->delete();
         return response()->json(['message' => 'The Section Deleted Successfully'], 200);
     }

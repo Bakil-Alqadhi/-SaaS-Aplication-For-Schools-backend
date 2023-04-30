@@ -11,6 +11,16 @@ class StudentPromotionRepository implements StudentPromotionRepositoryInterface
 {
     public function store($request)
     {
+        DB::setDefaultConnection('tenant');
+        $request->validate([
+            'grade_id' => ['required', 'exists:grades,id'],
+            'classroom_id' => ['required', 'exists:classrooms,id'],
+            'section_id' => ['required', 'exists:sections,id'],
+            'grade_id_new' => ['required', 'exists:grades,id'],
+            'classroom_id_new' => ['required', 'exists:classrooms,id'],
+            'section_id_new' => ['required', 'exists:sections,id'],
+
+        ]);
         DB::beginTransaction();
 
         try {
@@ -32,20 +42,23 @@ class StudentPromotionRepository implements StudentPromotionRepositoryInterface
                 $student->classroom_id = $request->classroom_id_new;
                 $student->section_id = $request->section_id_new;
 
+                $student->save();
+
                 //insert into promotions table
                 Promotion::updateOrCreate([
                     'student_id' => $student->id,
                     //from
-                    'from_grade_id' => $request->grade_id,
-                    'from_classroom_id' => $request->classroom_id,
-                    'from_section_id' => $request->section_id,
+                    'from_grade' => $request->grade_id,
+                    'from_classroom' => $request->classroom_id,
+                    'from_section' => $request->section_id,
                     //to
-                    'to_grade_id' => $request->grade_id_new,
-                    'to_classroom_id' => $request->classroom_id_new,
-                    'to_section_id' => $request->section_id_new,
+                    'to_grade' => $request->grade_id_new,
+                    'to_classroom' => $request->classroom_id_new,
+                    'to_section' => $request->section_id_new,
                 ]);
             }
             DB::commit();
+            DB::setDefaultConnection('mysql');
             return response()->json([
                 'message' => "New promotion added successfully"
             ], 201);
