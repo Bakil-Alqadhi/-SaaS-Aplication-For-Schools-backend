@@ -30,6 +30,9 @@ return new class extends Migration
                 ->constrained('sections')
                 ->nullable()
                 ->cascadeOnDelete();
+            $table->string('from_academic_year');
+
+            
                 //to
                 $table->foreignId('to_grade')
                 ->constrained('grades')
@@ -43,6 +46,8 @@ return new class extends Migration
                 ->constrained('sections')
                 ->nullable()
                 ->cascadeOnDelete();
+            $table->string('to_academic_year');
+
             $table->timestamps();
         });
     }

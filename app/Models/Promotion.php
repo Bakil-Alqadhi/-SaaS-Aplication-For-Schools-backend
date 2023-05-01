@@ -4,11 +4,51 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Student;
+use App\Models\Grade;
+use App\Models\Classroom;
+use App\Models\Section;
 
 class Promotion extends Model
 {
     use HasFactory;
     protected $connection = 'tenant';
 
-    protected $fillable = ['student_id', 'from_grade', 'from_classroom', 'from_section', 'to_grade', 'to_classroom', 'to_section'];
+    protected $fillable = ['student_id', 'from_grade', 'from_classroom', 'from_section', 'from_academic_year', 'to_grade', 'to_classroom', 'to_section', 'to_academic_year'];
+
+
+    public function student()
+    {
+        return $this->belongsTo(Student::class, 'student_id');
+    }
+
+
+    //from
+    public function f_grade()
+    {
+        return $this->belongsTo(Grade::class, 'from_grade');
+    }
+    public function f_classroom()
+    {
+        return $this->belongsTo(Classroom::class, 'from_classroom');
+    }
+    public function f_section()
+    {
+        return $this->belongsTo(Section::class, 'from_section');
+    }
+
+
+    //to
+    public function t_grade()
+    {
+        return $this->belongsTo(Grade::class, 'to_grade');
+    }
+    public function t_classroom()
+    {
+        return $this->belongsTo(Classroom::class, 'to_classroom');
+    }
+    public function t_section()
+    {
+        return $this->belongsTo(Section::class, 'to_section');
+    }
 }

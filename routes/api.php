@@ -65,8 +65,12 @@ Route::middleware(['is-director'])->group(function () {
     Route::post('/acceptNewMember/{id}', [SchoolController::class, 'newMember'])->name('newMember');
 
     //promotions
-    Route::post('/promotions', [PromotionController::class, 'store']);
+    Route::prefix('promotions')->group(function () {
+        Route::get('', [PromotionController::class, 'index']);
+        Route::post('', [PromotionController::class, 'store']);
+        Route::delete('', [PromotionController::class, 'destroy']);
 
+    });
 
     //Start Grades
     Route::prefix('grades')->group(function () {
