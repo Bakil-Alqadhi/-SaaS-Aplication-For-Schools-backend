@@ -35,11 +35,11 @@ class TeacherController extends Controller
         $this->teacherRepository = $teacherRepository;
         $this->authRepository = $authRepositoryInterface;
         $this->authRepository->switchingMethod($request);
-        $this->middleware('auth:sanctum')->only( 'who', 'update', 'destroy');
+        $this->middleware('auth:sanctum')->only( 'teacherSections', 'update', 'destroy');
     }
-    public function who()
+    public function teacherSections()
     {
-        return response('this is teacher contrller who method');
+        return $this->teacherRepository->getTeacherSections();
     }
     public static function register(Request $request)
     {

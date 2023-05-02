@@ -4,6 +4,7 @@ use App\Events\DbSchoolConnected;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ClassroomController;
 use App\Http\Controllers\GradeController;
+use App\Http\Controllers\GraduatedController;
 use App\Http\Controllers\PromotionController;
 use App\Http\Controllers\SchoolController;
 use App\Http\Controllers\SectionController;
@@ -35,6 +36,7 @@ use Laravel\Sanctum\PersonalAccessToken;
 
 // Route::get('/grades/data', [GradeController::class, 'gradeData'])->name('gradeData');
 
+// Route::middleware(['cors'])->group(function(){
 Route::get('/user', [AuthController::class, 'user']);
 
 Route::post('/logout', [AuthController::class, 'destroy'])->name('logout');
@@ -69,7 +71,14 @@ Route::middleware(['is-director'])->group(function () {
         Route::get('', [PromotionController::class, 'index']);
         Route::post('', [PromotionController::class, 'store']);
         Route::delete('', [PromotionController::class, 'destroy']);
-
+    });
+    //graduate
+    Route::prefix('graduate')->group(function () {
+        Route::get('', [GraduatedController::class, 'index']);
+        Route::post('', [GraduatedController::class, 'store']);
+        Route::post('/{id}', [GraduatedController::class, 'storeStudent']);
+        Route::put('/{id}', [GraduatedController::class, 'update']);
+        Route::delete('', [GraduatedController::class, 'destroy']);
     });
 
     //Start Grades
@@ -98,7 +107,7 @@ Route::middleware(['is-director'])->group(function () {
     //Start Sections
     Route::prefix('sections')->group(function () {
         Route::get('/', [SectionController::class, 'index'])->name('indexSections');
-        Route::get('/{id}', [SectionController::class, 'show'])->name('showSections');
+        Route::get('/{id}', [SectionController::class, 'show']);
         Route::post('/create', [SectionController::class, 'store'])->name('storeSection');
         Route::put('/{id}', [SectionController::class, 'update'])->name('updateSection');
         Route::delete('/{id}', [SectionController::class, 'destroy'])->name('deleteSection');
@@ -114,6 +123,8 @@ Route::middleware(['is-director'])->group(function () {
 //teachers routes
 Route::middleware(['is-teacher'])->group(function () {
 
+
+    Route::get('/teacher/sections', [TeacherController::class, 'teacherSections']);
     Route::prefix('/teachers')->group(function () {
         // Route::get('', [TeacherController::class, 'index'])->name('indexTeachers');
         // Route::get('/{id}', [TeacherController::class, 'show'])->name('showTeacher');
@@ -152,6 +163,7 @@ Route::prefix('/students')->group(function () {
     Route::get('/', [StudentController::class, 'index'])->name('students');
     Route::get('/{student}', [StudentController::class, 'show'])->name('show');
 });
+// });
 // });
 
 

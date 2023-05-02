@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Models\Student;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -18,6 +19,7 @@ class SectionResource extends JsonResource
         foreach($this->teachers as $teacher) {
             $teachers[] = $teacher->id;
         }
+        $students = Student::where('isJoined', '!=', '0')->where('section_id', $this->id)->get();
         return [
             'id' => $this->id,
             'section_name' => $this->name,
@@ -26,7 +28,7 @@ class SectionResource extends JsonResource
             'classroom_id' => $this->classroom->id,
             'classroom_name' => $this->classroom->name,
             'teachers' => $teachers,
-            'students' => $this->students
+            'students' => $students
         ];
     }
 }

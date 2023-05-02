@@ -22,15 +22,15 @@ return new class extends Migration
                 ->constrained('parent_students')
                 ->nullable()
                 ->cascadeOnDelete();
-                $table->foreignId('grade_id')
+            $table->foreignId('grade_id')
                 ->constrained('grades')
                 ->nullable()
                 ->cascadeOnDelete();
-                $table->foreignId('classroom_id')
+            $table->foreignId('classroom_id')
                 ->constrained('classrooms')
                 ->nullable()
                 ->cascadeOnDelete();
-                $table->foreignId('section_id')
+            $table->foreignId('section_id')
                 ->constrained('sections')
                 ->nullable()
                 ->cascadeOnDelete();
@@ -43,6 +43,7 @@ return new class extends Migration
             $table->string('academic_year');
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
+            $table->softDeletes();
             $table->rememberToken();
             $table->timestamps();
         });

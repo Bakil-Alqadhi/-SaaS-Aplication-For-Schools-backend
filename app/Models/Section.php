@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use App\Models\Classroom;
 use App\Models\Grade;
 use App\Models\Teacher;
-use App\Models\Student;
+
 
 class Section extends Model
 {

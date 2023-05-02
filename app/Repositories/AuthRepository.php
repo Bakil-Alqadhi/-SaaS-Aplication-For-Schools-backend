@@ -21,6 +21,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 use Laravel\Sanctum\HasApiTokens;
 
 
@@ -53,11 +54,12 @@ class AuthRepository implements AuthRepositoryInterface
     //registration method
     public function register($request)
     {
-        if ($request->userType == 'director') {
+        // $this->switchingMethod($request);
+        if ($request->header('X-Sanctum-Guard') == 'director') {
             return $this->directorRegistration($request);
-        } else if ($this->guard == 'student') {
+        } else if ($request->header('X-Sanctum-Guard') == 'student') {
             return $this->studentRegistration($request);
-        } else if ($this->guard == 'teacher') {
+        } else if ($request->header('X-Sanctum-Guard') == 'teacher') {
             return $this->teacherRegistration($request);
         }
     }
@@ -105,7 +107,9 @@ class AuthRepository implements AuthRepositoryInterface
                 'school' => $school,
                 'token' => $token
             ];
-            return $response;
+            return response()->json([
+                'data' => $response
+            ], 202);
         } catch (Exception $e) {
             DB::rollBack();
             throw $e;
@@ -113,7 +117,7 @@ class AuthRepository implements AuthRepositoryInterface
     }
 
     //Student registration method
-    public function studentRegistration(Request $request)
+    public function studentRegistration($request)
     {
         // $request->validate([
         //     //student validation
@@ -135,31 +139,35 @@ class AuthRepository implements AuthRepositoryInterface
         //     'parent_email' => ['required', 'string', 'email', 'max:255', 'unique:' . ParentStudent::class],
         // ]);
         //////////////////////////////
+
+        // return response()->json([
+        //     'classroom_id'    => $request->classroom
+        // ]);
         $validator = Validator::make($request->all(), [
             //student validation
             'student_first_name' => ['required', 'string', 'max:255'],
             'student_middle_name' => ['required', 'string', 'max:255'],
             'student_last_name' => ['required', 'string', 'max:255'],
-            'image' => ['required'],
+            'image' => ['required', 'string'],
             'sex'    => ['required', 'string', 'max:6'],
             'grade'    => ['required', 'exists:grades,id'],
             'classroom'    => ['required',  'exists:classrooms,id'],
             'student_address' => ['required', 'string', 'max:255'],
             'birthday' => ['required', 'date', 'before:today', 'after:' . date('Y-m-d', strtotime('-100 years'))],
             'student_phone' => ['required', 'string', 'max:255'],
-            'student_email' => ['required', 'string', 'email', 'max:255', 'unique:' . Student::class],
+            'student_email' => ['required', 'string', 'email', 'max:255', Rule::unique('students', 'email')],
             'password' => ['required', 'confirmed'],
             //parent  validation
             'parent_first_name' =>  ['required', 'string', 'max:255'],
             'parent_last_name' => ['required', 'string', 'max:255'],
             'parent_phone' => ['required', 'string', 'max:255'],
-            'parent_email' => ['required', 'string', 'email', 'max:255', 'unique:' . ParentStudent::class],
+            'parent_email' => ['required', 'string', 'email', 'max:255', Rule::unique('parent_students', 'email')],
         ]);
-        // if ($validator->fails()) {
-        //     return [
-        //         'errors' => 'errors'
-        //     ];
-        // }
+        if ($validator->fails()) {
+            return response()->json([
+                'errors' => $validator->errors()->all()
+            ], 422);
+        }
         DB::beginTransaction();
         try {
             $parent = ParentStudent::create([
@@ -174,9 +182,9 @@ class AuthRepository implements AuthRepositoryInterface
                 'middle_name' => $request->student_middle_name,
                 'last_name' => $request->student_last_name,
                 'image' => $request->image,
-                'sex'    => $request->sex,
-                'grade_id'    => $request->grade,
-                'classroom_id'    => $request->classroom,
+                'sex'  => $request->sex,
+                'grade_id'   => $request->grade,
+                'classroom_id'  => $request->classroom,
                 'address' => $request->student_address,
                 'birthday' => $request->birthday,
                 'phone' => $request->student_phone,
@@ -195,7 +203,9 @@ class AuthRepository implements AuthRepositoryInterface
             'user' => new StudentResource($student),
             'token' => $token
         ];
-        return $response;
+        return response()->json([
+            'data' => $response
+        ], 202);
     }
     //Teacher Registration method
     public function teacherRegistration($request)
@@ -230,7 +240,9 @@ class AuthRepository implements AuthRepositoryInterface
             'role' => 'teacher',
             'token' => $token
         ];
-        return $response;
+        return response()->json([
+            'data' => $response
+        ], 202);
     }
 
     //login method

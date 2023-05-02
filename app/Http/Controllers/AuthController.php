@@ -39,8 +39,8 @@ class AuthController extends Controller
     protected $token;
     public  function __construct(Request $request, AuthRepositoryInterface $authRepository)
     {
+        $authRepository->switchingMethod($request);
         $this->authRepository = $authRepository;
-        $this->authRepository->switchingMethod($request);
 
         // if ($request->header('X-Sanctum-Guard') != 'director') {
         //     $this->school_id = $request->header('X-School');
@@ -120,9 +120,7 @@ class AuthController extends Controller
         // }
 
 
-        return response()->json([
-            'data'=> $this->authRepository->register($request)
-        ], 201);
+        return $this->authRepository->register($request);
 
     }
 

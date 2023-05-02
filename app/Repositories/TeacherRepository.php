@@ -4,7 +4,9 @@ namespace App\Repositories;
 
 use App\Http\Resources\TeacherResource;
 use App\Interfaces\TeacherRepositoryInterface;
+use App\Models\Grade;
 use App\Models\School;
+use App\Models\Section;
 use App\Models\Teacher;
 use Exception;
 use Illuminate\Support\Facades\DB;
@@ -90,5 +92,51 @@ class TeacherRepository implements TeacherRepositoryInterface
         // DB::setDefaultConnection('mysql');
 
         return response()->json(['message' => 'The Teacher Updated Successfully'], 201);
+    }
+
+    public function getTeacherSections()
+    {
+        $grades = Grade::with(['sections'])->get();
+        $gradeData = [];
+        $sectionsData = [];
+        $sections = Section::whereHas('teachers', function ($query) {
+            $query->where('teacher_id', auth()->user()->id);
+        })->get();
+        // foreach ($grades as $grade) {
+        //     foreach ($grade->sections as $section) {
+        //         $sectionsData[] = [
+        //             'classroom_name' => $section->classroom->name,
+        //             'classroom_id' => $section->classroom->id,
+        //             'section_name' => $section->name,
+        //             'section_id' => $section->id,
+        //         ];
+        //     }
+        //     $gradeData[] = [
+        //         'grade_id' => $grade->id,
+        //         'grade_name' => $grade->name,
+        //         'sectionsData' => $sectionsData
+        //     ];
+        //     $sectionsData = array();
+        // }
+        // return $gradeData;
+
+        foreach ($sections as $section) {
+            $sectionsData[] = [
+                'classroom_name' => $section->classroom->name,
+                'classroom_id' => $section->classroom->id,
+                'section_name' => $section->name,
+                'section_id' => $section->id,
+            ];
+
+            $gradeData[] = [
+                'grade_id' => $section->grade->id,
+                'grade_name' => $section->grade->name,
+                'sectionsData' => $sectionsData
+            ];
+            $sectionsData = array();
+        }
+
+        return response()->json(['data' => $gradeData], 200);
+
     }
 }

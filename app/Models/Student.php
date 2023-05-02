@@ -11,9 +11,12 @@ use App\Models\ParentStudent;
 use App\Models\Grade;
 use App\Models\Section;
 use App\Models\Classroom;
+use App\Models\Attendance;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Student extends Authenticatable
 {
+    use SoftDeletes;
     use HasApiTokens, HasFactory, Notifiable;
 
     /**
@@ -64,6 +67,11 @@ class Student extends Authenticatable
     public function section()
     {
         return $this->belongsTo(Section::class);
+    }
+    //Attendance
+    public function attendances()
+    {
+        return $this->hasMany(Attendance::class);
     }
 
 }

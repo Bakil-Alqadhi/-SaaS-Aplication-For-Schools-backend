@@ -68,7 +68,8 @@ class Kernel extends HttpKernel
         'SetConnection' => \App\Http\Middleware\SetConnection::class,
         'is-director' => \App\Http\Middleware\EnsureGuardDirector::class,
         'is-teacher' => \App\Http\Middleware\EnsureGuardTeacher::class,
-        'is-student' => \App\Http\Middleware\EnsureGuardStudent::class
-        
+        'is-student' => \App\Http\Middleware\EnsureGuardStudent::class,
+        'cors' => \App\Http\Middleware\CorsMiddleware::class,
+
     ];
 }

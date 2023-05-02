@@ -71,7 +71,7 @@ class ClassroomController extends Controller
 
     public function studentsClassroom($id)
     {
-        return $this->classroomRepository->getStudentsByClassroomId($id);
+        return $this->classroomRepository->getStudentsBySectionId($id);
     }
 
     /**

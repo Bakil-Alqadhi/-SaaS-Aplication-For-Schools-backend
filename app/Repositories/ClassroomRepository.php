@@ -7,6 +7,7 @@ use App\Http\Resources\StudentResource;
 use App\Interfaces\ClassroomRepositoryInterface;
 use App\Models\Classroom;
 use App\Models\Section;
+use App\Models\Student;
 use Exception;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
@@ -109,12 +110,14 @@ class ClassroomRepository implements ClassroomRepositoryInterface
 
         return response()->json(['message' => 'The Classroom Updated Successfully'], 201);
     }
-    public function getStudentsByClassroomId($id)
+    public function getStudentsBySectionId($id)
     {
         $section = Section::findOrFail($id);
         if ($section) {
+            $students = Student::whereNull('section_id')->where('classroom_id', $section->classroom->id)->where('isJointed', '1')->get();
+            // $section->classroom->students->where('section_id', null)->where('isJointed', '1')
             return response()->json([
-                'data' =>  StudentResource::collection($section->classroom->students->where('section_id', null))
+                'data' =>  StudentResource::collection($students)
             ], 200);
         } else
             return response()->json(['message' => "The Section is't exist"], 402);

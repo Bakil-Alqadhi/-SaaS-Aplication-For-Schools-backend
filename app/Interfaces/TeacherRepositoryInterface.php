@@ -11,6 +11,7 @@ interface TeacherRepositoryInterface
 
     //show teacher
     public function getTeacherById($id);
+    public function getTeacherSections();
 
     public function updateTeacher($request, $id);
 

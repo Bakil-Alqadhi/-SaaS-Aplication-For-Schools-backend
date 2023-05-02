@@ -44,6 +44,7 @@ class Teacher extends Authenticatable
     //relationship between teacher and section (fmany to many)
     public function specializations()
     {
-        return $this->belongsTo(Specialization::class);
+        return $this->belongsTo
+        (Specialization::class);
     }
 }
