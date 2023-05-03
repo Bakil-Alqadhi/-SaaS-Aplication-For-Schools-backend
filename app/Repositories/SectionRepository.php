@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use App\Http\Resources\SectionResource;
+use App\Http\Resources\StudentResource;
 use App\Http\Resources\TeacherResource;
 use App\Interfaces\SectionRepositoryInterface;
 use App\Models\Grade;
@@ -105,6 +106,13 @@ class SectionRepository implements SectionRepositoryInterface
         }
         return response()->json([
             'message' => "Students added to section successfully"
+        ], 200);
+    }
+
+    public function getStudentsBySectionId($id){
+        $students = Section::findOrFail($id)->students;
+        return response()->json([
+            'data' => StudentResource::collection($students)
         ], 200);
     }
 

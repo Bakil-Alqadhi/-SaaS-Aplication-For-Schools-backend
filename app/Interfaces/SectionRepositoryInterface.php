@@ -10,6 +10,7 @@ interface SectionRepositoryInterface
     public function showSectionById($id);
     public function updateSection($request, $id);
     public function addStudentsBySectionId($request, $id);
+    public function getStudentsBySectionId($id);
 
     public function destroySection($id);
 

@@ -102,24 +102,6 @@ class TeacherRepository implements TeacherRepositoryInterface
         $sections = Section::whereHas('teachers', function ($query) {
             $query->where('teacher_id', auth()->user()->id);
         })->get();
-        // foreach ($grades as $grade) {
-        //     foreach ($grade->sections as $section) {
-        //         $sectionsData[] = [
-        //             'classroom_name' => $section->classroom->name,
-        //             'classroom_id' => $section->classroom->id,
-        //             'section_name' => $section->name,
-        //             'section_id' => $section->id,
-        //         ];
-        //     }
-        //     $gradeData[] = [
-        //         'grade_id' => $grade->id,
-        //         'grade_name' => $grade->name,
-        //         'sectionsData' => $sectionsData
-        //     ];
-        //     $sectionsData = array();
-        // }
-        // return $gradeData;
-
         foreach ($sections as $section) {
             $sectionsData[] = [
                 'classroom_name' => $section->classroom->name,

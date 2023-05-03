@@ -114,6 +114,9 @@ Route::middleware(['is-director'])->group(function () {
 
         //adding students to the section
         Route::post('add/students/to/{id}', [SectionController::class, 'addStudents']);
+
+        //getting section's students
+        Route::get('/{id}/students', [SectionController::class, 'getSectionStudents']);
     });
     //End Sections
 });
@@ -122,6 +125,10 @@ Route::middleware(['is-director'])->group(function () {
 /////////////////////////////////////////////////////////////
 //teachers routes
 Route::middleware(['is-teacher'])->group(function () {
+
+
+    //getting section's students
+    Route::get('sections/{id}/students', [SectionController::class, 'getSectionStudents']);
 
 
     Route::get('/teacher/sections', [TeacherController::class, 'teacherSections']);
