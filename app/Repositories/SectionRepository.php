@@ -2,6 +2,7 @@
 
 namespace App\Repositories;
 
+use App\Http\Resources\AttendanceResource;
 use App\Http\Resources\SectionResource;
 use App\Http\Resources\StudentResource;
 use App\Http\Resources\TeacherResource;
@@ -39,7 +40,8 @@ class SectionRepository implements SectionRepositoryInterface
         }
         return $gradeData;
     }
-    public function storeSection($request){
+    public function storeSection($request)
+    {
         DB::setDefaultConnection('tenant');
         $request->validate([
             'name' => ['required', 'string', 'unique:sections'],
@@ -59,7 +61,8 @@ class SectionRepository implements SectionRepositoryInterface
         return response()->json(['message' => 'New Section Created Successfully'], 201);
     }
 
-    public function showSectionById($id){
+    public function showSectionById($id)
+    {
         $section = Section::where('id', $id)->first();
         // return $section;
         if ($section)
@@ -90,16 +93,17 @@ class SectionRepository implements SectionRepositoryInterface
         return response()->json(['message' => 'The Section Updated Successfully'], 201);
     }
 
-    public function addStudentsBySectionId($request, $id){
+    public function addStudentsBySectionId($request, $id)
+    {
         $data = $request->json()->all();
         $section = Section::findOrFail($id);
         $selectedStudent = json_decode($data['students'], true);
         $students = Student::where('classroom_id', $section->classroom->id)
-                ->whereNull('section_id')
-                ->get();
+            ->whereNull('section_id')
+            ->get();
 
-        foreach($students as $student){
-            if(in_array($student->id, $selectedStudent)){
+        foreach ($students as $student) {
+            if (in_array($student->id, $selectedStudent)) {
                 $student->section_id = $section->id;
                 $student->save();
             }
@@ -109,10 +113,13 @@ class SectionRepository implements SectionRepositoryInterface
         ], 200);
     }
 
-    public function getStudentsBySectionId($id){
-        $students = Section::findOrFail($id)->students;
+    public function getStudentsBySectionId($id)
+    {
+        // $students = Section::findOrFail($id)->students;
+        $students = Student::with('attendances')->where('section_id', $id)->get();
         return response()->json([
-            'data' => StudentResource::collection($students)
+            //StudentResource::collection($students)
+            'data' => AttendanceResource::collection($students)
         ], 200);
     }
 
@@ -120,12 +127,11 @@ class SectionRepository implements SectionRepositoryInterface
     {
         $section = Section::findOrFail($id);
         $students = $section->students;
-        foreach($students as $student){
+        foreach ($students as $student) {
             $student->section_id = null;
             $student->save();
         }
         $section->delete();
         return response()->json(['message' => 'The Section Deleted Successfully'], 200);
     }
-
 }

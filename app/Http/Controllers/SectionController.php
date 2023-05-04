@@ -15,12 +15,12 @@ use Illuminate\Validation\Rule;
 class SectionController extends Controller
 {
     private SectionRepositoryInterface $sectionRepository;
-    public function __construct(Request $request , SectionRepositoryInterface $sectionRepository, AuthRepositoryInterface $authRepositoryInterface)
+    public function __construct(Request $request, SectionRepositoryInterface $sectionRepository, AuthRepositoryInterface $authRepositoryInterface)
     {
         $this->sectionRepository = $sectionRepository;
 
         $authRepositoryInterface->switchingMethod($request);
-        $this->middleware('auth:sanctum')->only('store', 'show', 'update', 'addStudents', 'getSectionStudents', 'destroy');
+        $this->middleware('auth:sanctum')->only('store', 'show', 'update', 'addStudents', 'destroy');
     }
     public function index()
     {
@@ -46,10 +46,10 @@ class SectionController extends Controller
         return $this->sectionRepository->addStudentsBySectionId($request, $id);
     }
     //getting section's students
-    public function getSectionStudents($id)
-    {
-        return $this->sectionRepository->getStudentsBySectionId($id);
-    }
+    // public function getSectionStudents($id)
+    // {
+    //     return $this->sectionRepository->getStudentsBySectionId($id);
+    // }
     public function destroy($id)
     {
         return $this->sectionRepository->destroySection($id);

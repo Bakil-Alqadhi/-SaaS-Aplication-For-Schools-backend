@@ -1,6 +1,7 @@
 <?php
 
 use App\Events\DbSchoolConnected;
+use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ClassroomController;
 use App\Http\Controllers\GradeController;
@@ -116,7 +117,7 @@ Route::middleware(['is-director'])->group(function () {
         Route::post('add/students/to/{id}', [SectionController::class, 'addStudents']);
 
         //getting section's students
-        Route::get('/{id}/students', [SectionController::class, 'getSectionStudents']);
+        Route::get('/{id}/students', [AttendanceController::class, 'show']);
     });
     //End Sections
 });
@@ -127,8 +128,14 @@ Route::middleware(['is-director'])->group(function () {
 Route::middleware(['is-teacher'])->group(function () {
 
 
-    //getting section's students
-    Route::get('sections/{id}/students', [SectionController::class, 'getSectionStudents']);
+
+    Route::prefix('sections')->group(function () {
+        //getting section's students
+        // Route::get('sections/{id}/students', [SectionController::class, 'getSectionStudents']);
+        Route::get('/{id}/students', [AttendanceController::class, 'show']);
+        Route::post('/{id}/students/attendance', [AttendanceController::class, 'store']);
+    });
+
 
 
     Route::get('/teacher/sections', [TeacherController::class, 'teacherSections']);
