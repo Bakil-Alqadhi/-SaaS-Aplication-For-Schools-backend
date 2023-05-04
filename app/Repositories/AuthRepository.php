@@ -216,9 +216,9 @@ class AuthRepository implements AuthRepositoryInterface
             'last_name' => ['required', 'string', 'max:255'],
             'image' => ['required', 'string', 'max:255'],
             'about' => ['required', 'string', 'max:255'],
-            'specialization' => ['required'],
+            // 'specialization' => ['required'],
             'phone' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:' . Teacher::class],
+            'email' => ['required', 'string', 'email', 'max:255', Rule::unique('teachers', 'email')],
             'password' => ['required', 'confirmed'],
 
         ]);
@@ -227,7 +227,7 @@ class AuthRepository implements AuthRepositoryInterface
             'last_name' => $request->last_name,
             'phone' => $request->phone,
             'about' => $request->about,
-            'specialization_id' => $request->specialization,
+            // 'specialization_id' => $request->specialization,
             'image' => $request->image,
             'email' => $request->email,
             'password' => Hash::make($request->password),

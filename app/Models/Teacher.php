@@ -13,7 +13,7 @@ class Teacher extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
     protected $connection = 'tenant';
-    protected $fillable = ['first_name', 'last_name', 'image', 'specialization_id', 'about', 'isJoined', 'isLeader', 'phone', 'email', 'password'];
+    protected $fillable = ['first_name', 'last_name', 'image', 'about', 'isJoined', 'isLeader', 'phone', 'email', 'password'];
 
 
     /**
@@ -42,9 +42,9 @@ class Teacher extends Authenticatable
     }
 
     //relationship between teacher and section (fmany to many)
-    public function specializations()
-    {
-        return $this->belongsTo
-        (Specialization::class);
-    }
+    // public function specializations()
+    // {
+    //     return $this->belongsTo
+    //     (Specialization::class);
+    // }
 }

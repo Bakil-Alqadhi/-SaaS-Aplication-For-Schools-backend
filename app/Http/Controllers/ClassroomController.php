@@ -21,7 +21,7 @@ class ClassroomController extends Controller
         $authRepository->switchingMethod($request);
         $this->classroomRepository = $classroomRepository;
         // $authRepository->switchingMethod($request);
-        $this->middleware('auth:sanctum')->only('store','update','destroy');
+        $this->middleware('auth:sanctum')->only('studentsClassroom', 'store','update','destroy');
     }
 
     /**

@@ -113,12 +113,16 @@ class ClassroomRepository implements ClassroomRepositoryInterface
     public function getStudentsBySectionId($id)
     {
         $section = Section::findOrFail($id);
+        $classroom_id = $section->classroom->id;
         if ($section) {
-            $students = Student::whereNull('section_id')->where('classroom_id', $section->classroom->id)->where('isJointed', '1')->get();
+            $students = Student::whereNull('section_id')->where('classroom_id', $classroom_id)->where('isJoined', '1')->get();
             // $section->classroom->students->where('section_id', null)->where('isJointed', '1')
-            return response()->json([
-                'data' =>  StudentResource::collection($students)
-            ], 200);
+            if ($students) {
+                return response()->json([
+                    'data' =>  StudentResource::collection($students)
+                ], 200);
+            } else
+                return response()->json(['message' => "The Section is't exist"], 402);
         } else
             return response()->json(['message' => "The Section is't exist"], 402);
     }
@@ -126,7 +130,7 @@ class ClassroomRepository implements ClassroomRepositoryInterface
     {
         $classroom = Classroom::findOrFail($id);
         $students = $classroom->students;
-        foreach($students as $student){
+        foreach ($students as $student) {
             $student->classroom_id = null;
             $student->save();
         }

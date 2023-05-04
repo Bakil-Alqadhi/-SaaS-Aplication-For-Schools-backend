@@ -16,8 +16,8 @@ return new class extends Migration
             $table->string('first_name');
             $table->string('last_name');
             $table->string('image');
-            $table->unsignedBigInteger('specialization_id');
-            $table->foreign('specialization_id')->references('id')->on('specializations')->onDelete('cascade')->onUpdate('cascade');
+            // $table->unsignedBigInteger('specialization_id');
+            // $table->foreign('specialization_id')->references('id')->on('specializations')->onDelete('cascade')->onUpdate('cascade');
             $table->string('about');
             $table->boolean('isLeader')->default(false);
             $table->boolean('isJoined')->default(false);

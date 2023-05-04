@@ -24,7 +24,7 @@ class TeacherFactory extends Factory
             "isJoined"=> fake()->boolean(),
             "isLeader"=> fake()->boolean(),
             'image' => fake()->imageUrl(),
-            'specialization_id' => Specialization::inRandomOrder()->first()->id,
+            // 'specialization_id' => Specialization::inRandomOrder()->first()->id,
             "phone" => fake()->phoneNumber(),
             'about' => fake()->text(),
             'email' => fake()->unique()->safeEmail(),
