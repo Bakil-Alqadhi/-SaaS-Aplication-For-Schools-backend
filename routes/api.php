@@ -4,6 +4,7 @@ use App\Events\DbSchoolConnected;
 use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ClassroomController;
+use App\Http\Controllers\ExamController;
 use App\Http\Controllers\GradeController;
 use App\Http\Controllers\GraduatedController;
 use App\Http\Controllers\PromotionController;
@@ -11,6 +12,7 @@ use App\Http\Controllers\SchoolController;
 use App\Http\Controllers\SectionController;
 use App\Http\Controllers\SpecializationController;
 use App\Http\Controllers\StudentController;
+use App\Http\Controllers\SubjectController;
 use App\Http\Controllers\TeacherController;
 use App\Http\Resources\StudentResource;
 use App\Models\Classroom;
@@ -54,7 +56,7 @@ Route::get('grades/data', [GradeController::class, 'gradeData'])->name('gradeDat
 
 
 //Start Specializations
-Route::get('/specializations', [SpecializationController::class, 'index'])->name('getSpecializations');
+// Route::get('/specializations', [SpecializationController::class, 'index'])->name('getSpecializations');
 //End Specializations
 
 
@@ -120,6 +122,20 @@ Route::middleware(['is-director'])->group(function () {
         Route::get('/{id}/students', [AttendanceController::class, 'show']);
     });
     //End Sections
+    //Start Subject
+    Route::prefix('subjects')->group(function () {
+        Route::get('/', [SubjectController::class, 'index']);
+        Route::get('/{id}', [SubjectController::class, 'show']);
+        Route::post('/', [SubjectController::class, 'store']);
+        Route::put('/{id}', [SubjectController::class, 'update']);
+        Route::delete('/{id}', [SubjectController::class, 'destroy']);
+    });
+    //End Subject
+    //Start Exam
+    // Route::prefix('subjects')->group(function () {
+    Route::resource('exams', ExamController::class);
+    // });
+    //End Exam
 });
 
 //End directors routes

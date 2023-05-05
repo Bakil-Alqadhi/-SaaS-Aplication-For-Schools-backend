@@ -115,7 +115,7 @@ class ClassroomRepository implements ClassroomRepositoryInterface
         $section = Section::findOrFail($id);
         $classroom_id = $section->classroom->id;
         if ($section) {
-            $students = Student::whereNull('section_id')->where('classroom_id', $classroom_id)->where('isJoined', '1')->get();
+        $students = Student::whereNull('section_id')->where('classroom_id', $classroom_id)->where('isJoined', '1')->get();
             // $section->classroom->students->where('section_id', null)->where('isJointed', '1')
             if ($students) {
                 return response()->json([
