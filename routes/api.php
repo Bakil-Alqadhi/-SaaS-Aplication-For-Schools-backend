@@ -8,6 +8,7 @@ use App\Http\Controllers\ExamController;
 use App\Http\Controllers\GradeController;
 use App\Http\Controllers\GraduatedController;
 use App\Http\Controllers\PromotionController;
+use App\Http\Controllers\QuizController;
 use App\Http\Controllers\SchoolController;
 use App\Http\Controllers\SectionController;
 use App\Http\Controllers\SpecializationController;
@@ -133,7 +134,7 @@ Route::middleware(['is-director'])->group(function () {
     //End Subject
     //Start Exam
     // Route::prefix('subjects')->group(function () {
-    Route::resource('exams', ExamController::class);
+    Route::resource('quizzes', QuizController::class);
     // });
     //End Exam
 });
