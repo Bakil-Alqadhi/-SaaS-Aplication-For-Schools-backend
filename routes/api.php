@@ -8,6 +8,7 @@ use App\Http\Controllers\ExamController;
 use App\Http\Controllers\GradeController;
 use App\Http\Controllers\GraduatedController;
 use App\Http\Controllers\PromotionController;
+use App\Http\Controllers\QuestionController;
 use App\Http\Controllers\QuizController;
 use App\Http\Controllers\SchoolController;
 use App\Http\Controllers\SectionController;
@@ -17,6 +18,7 @@ use App\Http\Controllers\SubjectController;
 use App\Http\Controllers\TeacherController;
 use App\Http\Resources\StudentResource;
 use App\Models\Classroom;
+use App\Models\Question;
 use App\Models\School;
 use App\Models\Student;
 use Illuminate\Foundation\Auth\User;
@@ -144,6 +146,8 @@ Route::middleware(['is-director'])->group(function () {
 //teachers routes
 Route::middleware(['is-teacher'])->group(function () {
 
+
+    Route::resource('quizzes', QuestionController::class);
 
 
     Route::prefix('sections')->group(function () {

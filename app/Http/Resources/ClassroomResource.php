@@ -18,12 +18,19 @@ class ClassroomResource extends JsonResource
     {
 
         $students = Student::where('isJoined', '!=', '0')->where('classroom_id', $this->id)->get();
+
+        // $sections =[];
+        // foreach($this->sections as $section){
+        //     $sections[] = [ $section ,
+        //     'teachers' => $section->teachers];
+        // }
         return [
             'id' => $this->id,
             'name' => $this->name,
             'grade' => $this->grade->name,
             'grade_id' => $this->grade->id,
-            'sections' => $this->sections,
+            'sections' => SectionResource::collection($this->sections),
+            // 'sectionsWithTeachers' => $sections,
             'students' => $students
             //or
             //'grade' => $this->Grade::findOrFail($this->grade_id)->name

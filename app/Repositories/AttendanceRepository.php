@@ -42,15 +42,21 @@ class AttendanceRepository implements AttendanceRepositoryInterface
                             $exist_attendance->save();
                         }
                     } else {
-                        Attendance::create([
-                            'student_id' => $student_id,
-                            'grade_id' => $section->grade->id,
-                            'classroom_id' => $section->classroom->id,
-                            'section_id' => $id,
-                            'teacher_id' => auth()->user()->id,
-                            'attendance_date' => $attendanceDate,
-                            'attendance_status' => $attendance_status
-                        ]);
+                        Attendance::updateOrCreate(
+                            [
+                                'student_id' => $student_id,
+                                'attendance_date' => $attendanceDate
+                            ],
+                            [
+                                'student_id' => $student_id,
+                                'grade_id' => $section->grade->id,
+                                'classroom_id' => $section->classroom->id,
+                                'section_id' => $id,
+                                'teacher_id' => auth()->user()->id,
+                                'attendance_date' => $attendanceDate,
+                                'attendance_status' => $attendance_status
+                            ]
+                        );
                     }
                 }
             }

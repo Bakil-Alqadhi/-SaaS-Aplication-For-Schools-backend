@@ -15,13 +15,16 @@ use Illuminate\Validation\Rule;
 class GradeRepository implements GradeRepositoryInterface
 {
     //get all grades
-    public function getAllGrades() {
+    public function getAllGrades()
+    {
         return response()->json(Grade::all());
     }
-    public function getGradeData() {
+    public function getGradeData()
+    {
         return response()->json(GradeResource::collection(Grade::latest()->get()));
     }
-    public function storeGrade($request) {
+    public function storeGrade($request)
+    {
         DB::setDefaultConnection('tenant');
         $request->validate([
             'name' => ['required', 'string', 'unique:grades'],
@@ -34,13 +37,14 @@ class GradeRepository implements GradeRepositoryInterface
             'number' => $request->number
         ]);
         return response()->json(['message' => 'New Grade Created Successfully'], 201);
-
     }
-    public function showGrade($id) {
+    public function showGrade($id)
+    {
         $grade = Grade::findOrFail($id);
         return response()->json($grade);
     }
-    public function updateGrade($request, $id) {
+    public function updateGrade($request, $id)
+    {
         DB::setDefaultConnection('tenant');
         $request->validate([
             'name' => ['required', 'string', Rule::unique('grades', 'name')->ignore($id)],
@@ -53,16 +57,15 @@ class GradeRepository implements GradeRepositoryInterface
         DB::setDefaultConnection('mysql');
         return response()->json(['message' => 'The Grade Updated Successfully'], 201);
     }
-    public function destroyGrade($id) {
+    public function destroyGrade($id)
+    {
         $grade = Grade::findOrFail($id);
         $students = $grade->students;
-        foreach($students as $student){
+        foreach ($students as $student) {
             $student->grade_id = null;
             $student->save();
         }
         $grade->delete();
         return response()->json(['message' => 'Grade Deleted Successfully'], 200);
-
     }
-
 }

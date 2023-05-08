@@ -21,7 +21,9 @@ class GradeResource extends JsonResource
             'number' => $this->number,
             'classrooms' => $this->classrooms,
             'sectionsClassroom' => ClassroomResource::collection($this->classrooms),
-            'sections' => $this->sections
+            'sections' => $this->sections,
+            // 'sections' => $sections,
+            // 'teachers' => $this->teachers
         ];
     }
 }
