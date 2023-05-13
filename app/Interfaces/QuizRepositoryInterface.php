@@ -5,6 +5,7 @@ namespace App\Interfaces;
 interface QuizRepositoryInterface
 {
     public function getAllQuizzes();
+    public function teacherQuizzes();
     public function storeQuiz($request);
     public function getQuizById($id);
     public function updateQuiz($request, $id);

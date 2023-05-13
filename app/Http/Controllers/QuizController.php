@@ -13,11 +13,15 @@ class QuizController extends Controller
     {
         $this->quizRepository = $quizRepository;
         $authRepositoryInterface->switchingMethod($request);
-        $this->middleware('auth:sanctum')->only('index', 'show', 'store','update', 'destroy');
+        $this->middleware('auth:sanctum')->only('index', 'teacherQuizzes', 'show', 'store','update', 'destroy');
     }
     public function index()
     {
          return $this->quizRepository->getAllQuizzes();
+    }
+    public function teacherQuizzes()
+    {
+        return $this->quizRepository->teacherQuizzes();
     }
     public function store(Request $request)
     {

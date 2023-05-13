@@ -14,7 +14,7 @@ class QuestionController extends Controller
     {
         $this->questionRepository = $questionRepository;
         $authRepositoryInterface->switchingMethod($request);
-        $this->middleware('auth:sanctum')->only('index', 'show', 'store','update', 'destroy');
+        $this->middleware('auth:sanctum')->only('index', 'show', 'store', 'update', 'destroy');
     }
 
     /**
@@ -22,7 +22,7 @@ class QuestionController extends Controller
      */
     public function index()
     {
-        //
+        return $this->questionRepository->getAllQuestions();
     }
 
     /**

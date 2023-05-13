@@ -2,9 +2,10 @@
 
 namespace App\Repositories;
 
+use App\Http\Resources\QuestionResource;
 use App\Http\Resources\QuizResource;
 use App\Interfaces\QuestionRepositoryInterface;
-use App\Interfaces\QuizRepositoryInterface;
+use App\Models\Question;
 use App\Models\Quiz;
 use Illuminate\Support\Facades\DB;
 
@@ -15,7 +16,7 @@ class QuestionRepository implements QuestionRepositoryInterface
     {
         //ExamResource::collection(Exam::all())
         return response()->json([
-            'data' => QuizResource::collection(Quiz::all())
+            'data' => QuestionResource::collection(Question::where('teacher_id', auth()->user()->id)->get())
         ], 200);
     }
     public function storeQuestion($request)

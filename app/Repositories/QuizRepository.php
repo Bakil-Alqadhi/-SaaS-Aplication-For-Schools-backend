@@ -13,6 +13,7 @@ use App\Models\Subject;
 use Illuminate\Support\Facades\DB;
 
 
+
 class QuizRepository implements QuizRepositoryInterface
 {
     public function getAllQuizzes()
@@ -22,6 +23,12 @@ class QuizRepository implements QuizRepositoryInterface
             'data' => QuizResource::collection(Quiz::all())
         ], 200);
     }
+    public function teacherQuizzes(){
+        return response()->json([
+            'data' => QuizResource::collection(Quiz::where('teacher_id', auth()->user()->id)->get())
+        ], 200);
+    }
+
     public function storeQuiz($request)
     {
         try {

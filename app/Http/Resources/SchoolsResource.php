@@ -22,6 +22,7 @@ class SchoolsResource extends JsonResource
             'director_name' => User::where('school_id', $this->id)->first()->name,
             'school_name' => $this->school_name,
             'address' => $this->address,
+            'email' => User::where('school_id', $this->id)->first()->email,
             'phone' => $this->phone,
             'school_image'=> $this->school_image,
             'director_image' => $this->director_image,

@@ -58,16 +58,10 @@ Route::get('/grades/index', [GradeController::class, 'index'])->name('indexGrade
 Route::get('grades/data', [GradeController::class, 'gradeData'])->name('gradeData');
 
 
-//Start Specializations
-// Route::get('/specializations', [SpecializationController::class, 'index'])->name('getSpecializations');
-//End Specializations
-
-
-//routes for the director requests
-// Route::middleware(['SetConnection'])->group(function () {
 
 //Start directors routes
 Route::middleware(['is-director'])->group(function () {
+
 
     Route::get('/waiting', [SchoolController::class, 'getWaiting'])->name('getWaiting');
     Route::post('/acceptNewMember/{id}', [SchoolController::class, 'newMember'])->name('newMember');
@@ -134,10 +128,16 @@ Route::middleware(['is-director'])->group(function () {
         Route::delete('/{id}', [SubjectController::class, 'destroy']);
     });
     //End Subject
+
     //Start Exam
-    // Route::prefix('subjects')->group(function () {
-    Route::resource('quizzes', QuizController::class);
-    // });
+    Route::prefix('quizzes')->group(function () {
+        Route::get('/', [QuizController::class, 'index']);
+        Route::get('/{id}', [QuizController::class, 'show']);
+        Route::post('/', [QuizController::class, 'store']);
+        Route::put('/{id}', [QuizController::class, 'update']);
+        Route::delete('/{id}', [QuizController::class, 'destroy']);
+    });
+    // Route::resource('quizzes/', QuizController::class);
     //End Exam
 });
 
@@ -147,7 +147,9 @@ Route::middleware(['is-director'])->group(function () {
 Route::middleware(['is-teacher'])->group(function () {
 
 
-    Route::resource('quizzes', QuestionController::class);
+    //getting teacher's quizzes
+    Route::get('/teacher/quizzes', [QuizController::class, 'teacherQuizzes']);
+    Route::resource('questions', QuestionController::class);
 
 
     Route::prefix('sections')->group(function () {
@@ -233,6 +235,7 @@ Route::prefix('/schools')->group(function () {
         // });
     });
 });
+
 
 
 // Route::get('/teachers', [TeacherController::class, 'index'])->middleware(['auth:sanctum'])->name('teachers');
