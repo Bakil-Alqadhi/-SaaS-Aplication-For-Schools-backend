@@ -148,8 +148,24 @@ Route::middleware(['is-teacher'])->group(function () {
 
 
     //getting teacher's quizzes
-    Route::get('/teacher/quizzes', [QuizController::class, 'teacherQuizzes']);
-    Route::resource('questions', QuestionController::class);
+
+    Route::prefix('/teacher/quizzes')->group(function () {
+        Route::get('/', [QuizController::class, 'teacherQuizzes']);
+        Route::prefix('/{quiz}/questions')->group(function () {
+
+            Route::get('/', [QuestionController::class, 'index']);
+            Route::get('/{question}', [QuestionController::class, 'show']);
+            Route::post('/', [QuestionController::class, 'store']);
+            Route::put('/{question}', [QuestionController::class, 'update']);
+            Route::delete('/{id}', [QuestionController::class, 'destroy']);
+
+
+
+            // Route::resource('', QuestionController::class);
+        });
+    });
+    // Route::get('/teacher/quizzes', [QuizController::class, 'teacherQuizzes']);
+    // Route::resource('questions', QuestionController::class);
 
 
     Route::prefix('sections')->group(function () {

@@ -17,13 +17,14 @@ class QuestionResource extends JsonResource
         return [
             'id' => $this->id,
             'title' => $this->title,
+            'answers' => $this->answers,
             'right_answer' => $this->right_answer,
             'score' => $this->score,
-            'quiz_name' => $this->quiz->name,
+            // 'quiz_name' => $this->quiz->name,
             'quiz_id' => $this->quiz_id,
-            'teacher_id'=> $this->teacher_id,
-            'teacher_first_name' => $this->teacher->first_name,
-            'teacher_last_name' => $this->teacher->last_name,
+            // 'teacher_id'=> $this->teacher_id,
+            // 'teacher_first_name' => $this->grateacher->first_name,
+            // 'teacher_last_name' => $this->teacher->last_name,
         ];
     }
 }

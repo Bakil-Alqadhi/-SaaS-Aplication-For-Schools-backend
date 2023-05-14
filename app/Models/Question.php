@@ -10,7 +10,7 @@ class Question extends Model
     use HasFactory;
     protected $connection = 'tenant';
 
-    protected $fillable = ['title', 'title', 'answers', 'right_answer', 'score', 'quiz_id'];
+    protected $fillable = ['title', 'answers', 'right_answer', 'score', 'quiz_id'];
 
     public function quiz()
     {
