@@ -14,7 +14,7 @@ class AttendanceController extends Controller
     {
         $this->attendanceRepository = $attendanceRepository;
         $authRepositoryInterface->switchingMethod($request);
-        $this->middleware('auth:sanctum')->only('show', 'store');
+        $this->middleware('auth:sanctum')->only('show', 'store', 'attendanceReport');
     }
 
     //getting section's students
@@ -26,5 +26,9 @@ class AttendanceController extends Controller
     public function store(Request $request, $id)
     {
         return $this->attendanceRepository->storeAttendance($request, $id);
+    }
+    public function attendanceReport(Request $request)
+    {
+        return $this->attendanceRepository->getAttendanceReport($request);
     }
 }

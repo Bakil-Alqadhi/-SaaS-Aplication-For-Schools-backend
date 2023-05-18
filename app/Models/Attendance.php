@@ -18,4 +18,20 @@ class Attendance extends Model
     {
         return $this->belongsTo(Student::class);
     }
+    public function grade()
+    {
+        return $this->belongsTo(Grade::class);
+    }
+    public function classroom()
+    {
+        return $this->belongsTo(Classroom::class);
+    }
+    public function section()
+    {
+        return $this->belongsTo(Section::class);
+    }
+    public function teacher()
+    {
+        return $this->belongsTo(Teacher::class);
+    }
 }

@@ -62,6 +62,8 @@ Route::get('grades/data', [GradeController::class, 'gradeData'])->name('gradeDat
 //Start directors routes
 Route::middleware(['is-director'])->group(function () {
 
+    Route::post('attendance/report', [AttendanceController::class, 'attendanceReport']);
+
 
     Route::get('/waiting', [SchoolController::class, 'getWaiting'])->name('getWaiting');
     Route::post('/acceptNewMember/{id}', [SchoolController::class, 'newMember'])->name('newMember');
@@ -168,6 +170,7 @@ Route::middleware(['is-teacher'])->group(function () {
     // Route::resource('questions', QuestionController::class);
 
 
+    Route::post('/attendance/report', [AttendanceController::class, 'attendanceReport']);
     Route::prefix('sections')->group(function () {
         //getting section's students
         // Route::get('sections/{id}/students', [SectionController::class, 'getSectionStudents']);
@@ -178,6 +181,8 @@ Route::middleware(['is-teacher'])->group(function () {
 
 
     Route::get('/teacher/sections', [TeacherController::class, 'teacherSections']);
+
+
     Route::prefix('/teachers')->group(function () {
         // Route::get('', [TeacherController::class, 'index'])->name('indexTeachers');
         // Route::get('/{id}', [TeacherController::class, 'show'])->name('showTeacher');

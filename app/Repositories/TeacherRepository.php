@@ -108,6 +108,7 @@ class TeacherRepository implements TeacherRepositoryInterface
                 'classroom_id' => $section->classroom->id,
                 'section_name' => $section->name,
                 'section_id' => $section->id,
+                'students' => $section->students
             ];
 
             $gradeData[] = [
