@@ -6,6 +6,7 @@ use App\Interfaces\AttendanceRepositoryInterface;
 use App\Interfaces\AuthRepositoryInterface;
 use App\Interfaces\ClassroomRepositoryInterface;
 
+use App\Interfaces\ExamRepositoryInterface;
 use App\Interfaces\GradeRepositoryInterface;
 use App\Interfaces\GraduatedRepositoryInterface;
 use App\Interfaces\QuestionRepositoryInterface;
@@ -19,6 +20,7 @@ use App\Interfaces\TeacherRepositoryInterface;
 use App\Repositories\AttendanceRepository;
 use App\Repositories\AuthRepository;
 use App\Repositories\ClassroomRepository;
+use App\Repositories\ExamRepository;
 use App\Repositories\GradeRepository;
 use App\Repositories\GraduatedRepository;
 use App\Repositories\QuestionRepository;
@@ -51,7 +53,7 @@ class RepoServiceProvider extends ServiceProvider
         $this->app->bind(SubjectRepositoryInterface::class, SubjectRepository::class);
         $this->app->bind(QuizRepositoryInterface::class, QuizRepository::class);
         $this->app->bind(QuestionRepositoryInterface::class, QuestionRepository::class);
-
+        $this->app->bind(ExamRepositoryInterface::class, ExamRepository::class);
     }
 
     /**

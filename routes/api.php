@@ -206,6 +206,7 @@ Route::middleware(['is-student'])->group(function () {
         Route::delete('/{id}', [StudentController::class, 'destroy'])->name('destroyStudent');
         Route::put('/{id}', [StudentController::class, 'update'])->name('updateStudent');
     });
+    Route::resource('exams', ExamController::class);
 });
 //End Student routes
 

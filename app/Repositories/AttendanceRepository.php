@@ -74,7 +74,18 @@ class AttendanceRepository implements AttendanceRepositoryInterface
     //getting students attendance report
     public function getAttendanceReport($request)
     {
+
         try {
+            DB::setDefaultConnection('tenant');
+
+            $request->validate([
+                'section_id' => ['required', 'exists:sections,id'],
+                'from' => ['required', 'date', 'date_format:Y-m-d'],
+                'to' => ['required', 'date', 'date_format:Y-m-d', 'after_or_equal:from'],
+            ], [
+                'section_id.required' => 'The selected section is required.',
+                'section_id.exists' => 'Please select section.'
+            ]);
             $ids = DB::table('teacher_section')->where('teacher_id', auth()->user()->id)->pluck('section_id');
             $students  = Student::whereIn('section_id', $ids)->get();
 
