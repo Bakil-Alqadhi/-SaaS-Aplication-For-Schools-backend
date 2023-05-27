@@ -15,7 +15,7 @@ class ExamController extends Controller
         $authRepository->switchingMethod($request);
         $this->examRepo = $examRepositoryInterface;
         // $authRepository->switchingMethod($request);
-        $this->middleware('auth:sanctum')->only('index', 'show');
+        $this->middleware('auth:sanctum')->only('index', 'show', 'store');
     }
     /**
      * Display a listing of the resource.
@@ -38,7 +38,7 @@ class ExamController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        return $this->examRepo->storeAnswersExam($request);
     }
 
     /**

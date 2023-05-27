@@ -14,6 +14,32 @@ class QuizResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        $totalScore = -1;
+        if(auth()->user()->userType === 'student'){
+            if( $this->degrees->count() > 0 ) {
+                foreach($this->degrees as $index => $degree){
+                    if(auth()->user()->id == $degree->student_id){
+                        if($index == 0){
+                            $totalScore = 0;
+                            $totalScore += $degree->score;
+                        } else {
+                            $totalScore += $degree->score;
+                        }
+                    }
+                }
+            }
+            // if($totalScore != -1){
+            //     return [
+            //         'id' => $this->id,
+            //         'name' => $this->name,
+            //         'subject_id' => $this->subject_id,
+            //         'subject_name' => $this->subject->name,
+            //         'totalScore' =>  auth()->user()->userType != 'student' ? null: $totalScore,
+            //         'questions' => $this->questions->count() > 0? true: false
+            //     ];
+            // }
+        }
+
         return [
             'id' => $this->id,
             'name' => $this->name,
@@ -28,6 +54,8 @@ class QuizResource extends JsonResource
             'classroom_id' => $this->classroom->id,
             'section_name' => $this->section->name,
             'section_id' => $this->section->id,
+            'totalScore' =>  auth()->user()->userType != 'student' ? null: $totalScore,
+            'questions' => $this->questions->count() > 0? true: false
         ];
     }
 }
