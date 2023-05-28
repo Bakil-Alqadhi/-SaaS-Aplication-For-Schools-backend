@@ -116,11 +116,22 @@ class StudentRepository implements StudentRepositoryInterface
     {
         return  new StudentResource(Student::findOrFail($id));
     }
+    public function getGroupStudents()
+    {
+        // 'data' => StudentResource::collection(Student::where('section_id', auth()->user()->section_id)->get())
+
+
+        $students = Student::where('section_id', auth()->user()->section_id)->get();
+        return response()->json([
+            'data' => $students
+        ], 200);
+    }
 
     //delete student's account
-    public function updateStudent($request, $id){
-        if(!$this->validation($request)) {
-            return response()->json( [
+    public function updateStudent($request, $id)
+    {
+        if (!$this->validation($request)) {
+            return response()->json([
                 'errors' => $this->errors
             ], 422);
         } else {
@@ -152,7 +163,7 @@ class StudentRepository implements StudentRepositoryInterface
             DB::commit();
             return response()->json([
                 'message' => 'Student updated successfully'
-                ], 201);
+            ], 201);
         }
     }
 
@@ -160,19 +171,20 @@ class StudentRepository implements StudentRepositoryInterface
     public function destroyStudentAccount($request, $id)
     {
 
-        if( $request->user()->id == $id) {
+        if ($request->user()->id == $id) {
             $student = Student::findOrFail($id);
-        if($student){
-            $student->delete();
-            return response()->json(
-                ['message' => "Student's account is deleted successfully."]
-                , 200);
-        }
-        else {
-            return response()->json(
-                ['message' => 'The student could not be found.']
-                , 404);
-        }
+            if ($student) {
+                $student->delete();
+                return response()->json(
+                    ['message' => "Student's account is deleted successfully."],
+                    200
+                );
+            } else {
+                return response()->json(
+                    ['message' => 'The student could not be found.'],
+                    404
+                );
+            }
         } else {
             return response()->json(['message' => "You are not authorized to delete another user's account."], 403);
         }

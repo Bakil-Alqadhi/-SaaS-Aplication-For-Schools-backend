@@ -74,11 +74,11 @@ class ClassroomRepository implements ClassroomRepositoryInterface
             DB::commit();
             if (count($data) > 1) {
                 return response()->json([
-                    'message' => 'Classrooms Created Successfylly'
+                    'message' => 'Classrooms Created Successfully'
                 ], 201);
             } else {
                 return response()->json([
-                    'message' => 'Classroom Created Successfylly'
+                    'message' => 'Classroom Created Successfully'
                 ], 201);
             }
         } else {

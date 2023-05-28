@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Classroom extends Model
 {
+    protected $connection = 'tenant';
 
     public function grade()
     {
@@ -20,7 +21,8 @@ class Classroom extends Model
     {
         return $this->hasMany(Section::class);
     }
-    public function students(){
+    public function students()
+    {
         return $this->hasMany(Student::class);
     }
 }

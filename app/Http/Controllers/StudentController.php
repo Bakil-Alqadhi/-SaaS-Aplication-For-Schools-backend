@@ -27,7 +27,7 @@ class StudentController extends Controller
         $authRepository->switchingMethod($request);
         $this->studentRepository = $studentRepository;
         // $authRepository->switchingMethod($request);
-        $this->middleware('auth:sanctum')->only('update','destroy');
+        $this->middleware('auth:sanctum')->only('index','show','update','destroy', 'getGroup');
     }
     //get all students
     public function index(Request $request)
@@ -99,6 +99,11 @@ class StudentController extends Controller
         return response()->json([
             'data' => $this->studentRepository->getStudentById($id)
         ], 200);
+    }
+
+    public function getGroup( )
+    {
+        return $this->studentRepository->getGroupStudents();
     }
 
     public function update(Request $request, $id)

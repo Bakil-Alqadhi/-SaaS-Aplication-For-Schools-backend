@@ -205,6 +205,8 @@ Route::middleware(['is-student'])->group(function () {
     Route::prefix('/students')->group(function () {
         Route::delete('/{id}', [StudentController::class, 'destroy'])->name('destroyStudent');
         Route::put('/{id}', [StudentController::class, 'update'])->name('updateStudent');
+        Route::get('/group', [StudentController::class, 'getGroup']);
+
     });
     Route::resource('exams', ExamController::class);
 });
@@ -219,8 +221,8 @@ Route::prefix('/teachers')->group(function () {
 //student routes
 Route::prefix('/students')->group(function () {
     //get all students
-    Route::get('/', [StudentController::class, 'index'])->name('students');
-    Route::get('/{student}', [StudentController::class, 'show'])->name('show');
+    Route::get('/', [StudentController::class, 'index']);
+    Route::get('/{student}', [StudentController::class, 'show']);
 });
 // });
 // });

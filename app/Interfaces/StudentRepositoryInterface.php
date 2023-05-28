@@ -11,6 +11,9 @@ interface StudentRepositoryInterface
     //show one student
     public function getStudentById($id);
 
+    //get group's students
+    public function getGroupStudents();
+
     //delete student's account
     public function updateStudent($request, $id);
 
