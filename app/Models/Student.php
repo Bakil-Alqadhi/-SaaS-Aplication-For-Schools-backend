@@ -74,4 +74,9 @@ class Student extends Authenticatable
         return $this->hasMany(Attendance::class);
     }
 
+    public function degrees()
+    {
+        return $this->hasMany(Degree::class);
+    }
+
 }

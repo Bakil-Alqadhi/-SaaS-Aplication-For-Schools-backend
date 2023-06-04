@@ -3,11 +3,14 @@
 namespace App\Repositories;
 
 use App\Http\Resources\AttendanceResource;
+use App\Http\Resources\DegreeResource;
 use App\Http\Resources\SectionResource;
 use App\Http\Resources\StudentResource;
 use App\Http\Resources\TeacherResource;
 use App\Interfaces\SectionRepositoryInterface;
+use App\Models\Degree;
 use App\Models\Grade;
+use App\Models\Quiz;
 use App\Models\Section;
 use App\Models\Student;
 use App\Models\Teacher;
@@ -121,6 +124,22 @@ class SectionRepository implements SectionRepositoryInterface
             //StudentResource::collection($students)
             'data' => AttendanceResource::collection($students)
         ], 200);
+    }
+    public function getDegreesByQuizId($id)
+    {
+        $quiz = Quiz::findOrFail($id);
+        if ($quiz->teacher_id == auth()->user()->id) {
+            $section  = $quiz->section;
+            // $students = $section->students()->with('degrees')->get();
+            $students = $section->students()->with('degrees', function ($query) use ($id) {
+                $query->where('quiz_id', $id);
+            })->get();
+            return response()->json([
+                'data' => DegreeResource::collection($students)
+            ], 200);
+        } else {
+            return response()->json(['message' => "You don't have access to this quiz."], 403);
+        }
     }
 
     public function destroySection($id)

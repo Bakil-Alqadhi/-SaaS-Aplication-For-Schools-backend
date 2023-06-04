@@ -11,4 +11,9 @@ class Degree extends Model
     protected $connection = 'tenant';
 
     protected $fillable = ['quiz_id', 'student_id', 'question_id', 'score', 'date'];
+
+    public function student()
+    {
+        return $this->belongsTo(Student::class);
+    }
 }

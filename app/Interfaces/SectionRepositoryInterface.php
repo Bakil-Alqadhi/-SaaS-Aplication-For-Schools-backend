@@ -11,7 +11,7 @@ interface SectionRepositoryInterface
     public function updateSection($request, $id);
     public function addStudentsBySectionId($request, $id);
     public function getStudentsBySectionId($id);
-
+    public function getDegreesByQuizId($id);
     public function destroySection($id);
 
 }

@@ -14,17 +14,17 @@ class QuizResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        $totalScore = -1;
+        $totalScore = null;
         if(auth()->user()->userType === 'student'){
             if( $this->degrees->count() > 0 ) {
                 foreach($this->degrees as $index => $degree){
                     if(auth()->user()->id == $degree->student_id){
-                        if($index == 0){
-                            $totalScore = 0;
+                        // if($index == 0){
+                        //     $totalScore = 0;
+                        //     $totalScore += $degree->score;
+                        // } else {
                             $totalScore += $degree->score;
-                        } else {
-                            $totalScore += $degree->score;
-                        }
+                        // }
                     }
                 }
             }

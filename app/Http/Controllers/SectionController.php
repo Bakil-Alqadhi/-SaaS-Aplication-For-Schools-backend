@@ -20,7 +20,7 @@ class SectionController extends Controller
         $this->sectionRepository = $sectionRepository;
 
         $authRepositoryInterface->switchingMethod($request);
-        $this->middleware('auth:sanctum')->only('store', 'show', 'update', 'addStudents', 'destroy');
+        $this->middleware('auth:sanctum')->only('store', 'show', 'update', 'addStudents', 'getDegrees', 'destroy');
     }
     public function index()
     {
@@ -44,6 +44,12 @@ class SectionController extends Controller
     public function addStudents(Request $request, $id)
     {
         return $this->sectionRepository->addStudentsBySectionId($request, $id);
+    }
+
+    //getting students degrees in the section using quiz's id
+    public function getDegrees($id)
+    {
+        return $this->sectionRepository->getDegreesByQuizId($id);
     }
     //getting section's students
     // public function getSectionStudents($id)

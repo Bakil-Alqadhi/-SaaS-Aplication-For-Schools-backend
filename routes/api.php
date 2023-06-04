@@ -153,6 +153,7 @@ Route::middleware(['is-teacher'])->group(function () {
 
     Route::prefix('/teacher/quizzes')->group(function () {
         Route::get('/', [QuizController::class, 'teacherQuizzes']);
+        Route::get('/{id}/degrees', [SectionController::class, 'getDegrees']);
         Route::prefix('/{quiz}/questions')->group(function () {
 
             Route::get('/', [QuestionController::class, 'index']);
@@ -160,14 +161,8 @@ Route::middleware(['is-teacher'])->group(function () {
             Route::post('/', [QuestionController::class, 'store']);
             Route::put('/{question}', [QuestionController::class, 'update']);
             Route::delete('/{id}', [QuestionController::class, 'destroy']);
-
-
-
-            // Route::resource('', QuestionController::class);
         });
     });
-    // Route::get('/teacher/quizzes', [QuizController::class, 'teacherQuizzes']);
-    // Route::resource('questions', QuestionController::class);
 
 
     Route::post('/attendance/report', [AttendanceController::class, 'attendanceReport']);
@@ -188,13 +183,6 @@ Route::middleware(['is-teacher'])->group(function () {
         // Route::get('/{id}', [TeacherController::class, 'show'])->name('showTeacher');
         Route::put('/{id}', [TeacherController::class, 'update'])->name('updateTeacher');
     });
-
-    // Route::prefix('/teachers')->group(function () {
-    //     Route::put('/{id}', [TeacherController::class, 'update'])->name('updateTeacher');
-    // });
-    // Route::get('/teachers/who', function (Request $request) {
-    //     return 'this is who method';
-    // });
 });
 
 
@@ -206,7 +194,6 @@ Route::middleware(['is-student'])->group(function () {
         Route::delete('/{id}', [StudentController::class, 'destroy'])->name('destroyStudent');
         Route::put('/{id}', [StudentController::class, 'update'])->name('updateStudent');
         Route::get('/group', [StudentController::class, 'getGroup']);
-
     });
     Route::resource('exams', ExamController::class);
 });

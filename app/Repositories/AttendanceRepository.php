@@ -34,10 +34,6 @@ class AttendanceRepository implements AttendanceRepositoryInterface
                 }
                 if ($section->id == $request->section_id && $attendance !== null) {
                     $exist_attendance = Attendance::where('student_id', $student_id)->where('attendance_date', $attendanceDate)->first();
-                    // ->where('grade_id', $section->grade->id)
-                    // ->where('section_id', $id)
-                    // ->where('classroom_id', $section->classroom->id)
-
                     if ($exist_attendance) {
                         if ($exist_attendance->attendance_status !== $attendance_status) {
                             $exist_attendance->attendance_status = $attendance_status;
@@ -68,7 +64,6 @@ class AttendanceRepository implements AttendanceRepositoryInterface
         } catch (\Exception $e) {
             throw $e;
         }
-        // return response(['dd' => $request->attendance]);
     }
 
     //getting students attendance report
